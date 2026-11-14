@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redirecting…</title>
+</head>
+<body>
+  <p>Opening the redeem page…</p>
+  <script>
+    (() => {
+      const marker = '/q/';
+      const currentPath = window.location.pathname;
+      const markerIndex = currentPath.indexOf(marker);
+
+      if (markerIndex < 0) return;
+
+      const basePath = currentPath.slice(0, markerIndex);
+      const campaignPath = currentPath.slice(markerIndex + marker.length).replace(/^\/+|\/+$/g, '');
+      if (!campaignPath) return;
+
+      const target = `${basePath}/redeem.html?path=${encodeURIComponent(campaignPath)}${window.location.search}`;
+      window.location.replace(target);
+    })();
+  </script>
+</body>
+</html>

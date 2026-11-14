@@ -1,0 +1,2742 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Reward claim preview">
+  <title>Your reward is ready</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --surface-raised: #f5f5f6;
+      --surface-soft: #fafafa;
+      --border: rgba(25, 29, 35, .14);
+      --border-strong: rgba(25, 29, 35, .24);
+      --text: #191b20;
+      --muted: #5e636b;
+      --muted-dark: #777c84;
+      --green: #20df67;
+      --green-deep: #12b952;
+      --purple: #1b8b4b;
+      --shadow: 0 16px 38px rgba(25, 29, 35, .10);
+      --radius: 15px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 0; background: var(--bg); }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 27%, rgba(235, 239, 246, .75), transparent 24rem),
+        linear-gradient(180deg, #ffffff 0%, #ffffff 68%, #f7f7f8 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .site-header {
+      height: 65px;
+      border-bottom: 1px solid #e1e1e3;
+      background: rgba(248, 248, 249, .98);
+      box-shadow: 0 3px 15px rgba(25, 29, 35, .08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 25px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+      font-size: 25px;
+      font-weight: 950;
+      letter-spacing: -1.6px;
+      line-height: 1;
+      transform: scaleX(.94);
+      transform-origin: left center;
+    }
+
+    .brand-mark {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 3px;
+      border: 4px solid #f5f7fa;
+      transform: rotate(45deg);
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 35px;
+      margin-left: 78px;
+    }
+
+    .primary-nav a {
+      color: #f0f2f6;
+      font-size: 15px;
+      font-weight: 600;
+      transition: color .2s ease;
+    }
+
+    .primary-nav a:hover,
+    .primary-nav a:focus-visible { color: var(--green); }
+
+    .account-nav {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      margin-left: auto;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #f1f4f8;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      overflow: hidden;
+      border: 2px solid #29384b;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #dca77d, #758fa9 68%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .12);
+      font-size: 20px;
+    }
+
+    .avatar::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      width: 19px;
+      height: 18px;
+      border-radius: 50% 50% 45% 45%;
+      background: #d7a175;
+      box-shadow: 0 -4px 0 3px #2d201d;
+    }
+
+    .avatar::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      width: 32px;
+      height: 20px;
+      border-radius: 50% 50% 0 0;
+      background: #32485a;
+    }
+
+    .profile-name { margin-top: 1px; }
+    .profile-age { color: #abb5c3; font-size: 11px; font-weight: 500; }
+
+    .balance {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #f1f4f8;
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .robux-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border: 3px solid #e8edf4;
+      border-radius: 6px;
+      transform: rotate(45deg);
+    }
+
+    .robux-icon::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border: 2px solid #e8edf4;
+      transform: rotate(0deg);
+    }
+
+    .bell {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 28px;
+      color: #f1f4f8;
+    }
+
+    .bell svg { width: 21px; height: 24px; }
+
+    .page {
+      position: relative;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 51px 24px 42px;
+    }
+
+    .confetti {
+      position: absolute;
+      inset: 31px 0 auto;
+      height: 320px;
+      pointer-events: none;
+      opacity: .85;
+    }
+
+    .confetti i {
+      position: absolute;
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: #18c95c;
+      transform: rotate(45deg);
+      box-shadow: 0 0 15px rgba(32, 223, 103, .15);
+    }
+
+    .confetti i:nth-child(1) { left: 13.8%; top: 112px; width: 8px; height: 8px; background: #3c4c5d; }
+    .confetti i:nth-child(2) { left: 24.5%; top: 94px; width: 9px; height: 9px; }
+    .confetti i:nth-child(3) { left: 31%; top: 142px; width: 10px; height: 10px; }
+    .confetti i:nth-child(4) { left: 36.8%; top: 48px; width: 9px; height: 9px; }
+    .confetti i:nth-child(5) { left: 59.5%; top: 91px; width: 8px; height: 8px; }
+    .confetti i:nth-child(6) { left: 65.3%; top: 119px; width: 10px; height: 10px; }
+    .confetti i:nth-child(7) { left: 72%; top: 101px; width: 8px; height: 8px; background: #45505f; }
+    .confetti i:nth-child(8) { left: 82.5%; top: 129px; width: 9px; height: 9px; }
+    .confetti i:nth-child(9) { left: 88%; top: 62px; width: 7px; height: 7px; }
+    .confetti i:nth-child(10) { left: 18.3%; top: 207px; width: 7px; height: 7px; }
+    .confetti i:nth-child(11) { left: 82%; top: 207px; width: 9px; height: 9px; }
+    .confetti i:nth-child(12) { left: 91%; top: 254px; width: 8px; height: 8px; }
+    .confetti i:nth-child(13) { left: 14.2%; top: 264px; width: 8px; height: 8px; }
+    .confetti i:nth-child(14) { left: 64%; top: 19px; width: 6px; height: 6px; background: #304152; }
+    .confetti i:nth-child(15) { left: 46%; top: 113px; width: 6px; height: 6px; background: #344456; }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .success-mark {
+      display: grid;
+      place-items: center;
+      width: 91px;
+      height: 91px;
+      margin: 2px auto 25px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #2bf078, #12bc53);
+      box-shadow: 0 0 0 10px rgba(20, 216, 95, .05), 0 0 40px rgba(24, 230, 98, .53);
+    }
+
+    .success-mark svg { width: 49px; height: 49px; }
+
+    h1 {
+      margin: 0;
+      color: #f7f8fb;
+      font-size: clamp(35px, 5.25vw, 58px);
+      font-weight: 800;
+      letter-spacing: -2.5px;
+      line-height: 1.08;
+    }
+
+    h1 span { color: var(--green); }
+
+    .hero-copy {
+      max-width: 525px;
+      margin: 14px auto 27px;
+      color: #b0b8c5;
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(28, 37, 51, .82), rgba(14, 20, 30, .94));
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .025);
+    }
+
+    .reward-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 44% 56%;
+      min-height: 316px;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .reward-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 316px;
+      overflow: hidden;
+      border-right: 1px solid rgba(155, 171, 195, .12);
+      background:
+        radial-gradient(circle at 50% 48%, rgba(111, 38, 227, .75), rgba(62, 20, 132, .49) 38%, rgba(20, 17, 45, .07) 72%),
+        linear-gradient(135deg, #21164b, #110f21 82%);
+    }
+
+    .reward-art::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(161, 101, 255, .12);
+      border-radius: 11px;
+      pointer-events: none;
+    }
+
+    .limited-tag {
+      position: absolute;
+      z-index: 2;
+      top: 19px;
+      left: 23px;
+      padding: 7px 10px 6px;
+      border-radius: 4px;
+      background: #18df67;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .8px;
+      transform: rotate(-5deg);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, .2);
+    }
+
+    .crown {
+      position: relative;
+      z-index: 1;
+      width: 78%;
+      max-width: 310px;
+      filter: drop-shadow(0 15px 12px rgba(0, 0, 0, .5));
+    }
+
+    .reward-image {
+      display: none;
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      padding: 22px;
+      object-fit: contain;
+    }
+
+    .reward-art.has-reward-image .reward-image { display: block; }
+    .reward-art.has-reward-image .crown { display: none; }
+
+    .reward-details {
+      padding: 33px 25px 22px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #ffd51c;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .eyebrow svg { width: 21px; height: 21px; flex: 0 0 auto; }
+
+    h2 {
+      margin: 9px 0 13px;
+      font-size: 40px;
+      font-weight: 780;
+      letter-spacing: -1.5px;
+      line-height: 1.06;
+    }
+
+    .reward-description {
+      max-width: 345px;
+      margin: 0;
+      color: #bbc3cf;
+      font-size: 16px;
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
+    .time-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 36px;
+      padding: 15px 20px;
+      border: 1px solid rgba(140, 158, 185, .09);
+      border-radius: 12px;
+      background: rgba(31, 41, 56, .68);
+    }
+
+    .time-icon {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      flex: 0 0 auto;
+      border: 3px solid #abb5c6;
+      border-radius: 50%;
+    }
+
+    .time-icon::before {
+      content: "";
+      width: 2px;
+      height: 11px;
+      background: #abb5c6;
+      transform: translateY(-4px);
+      box-shadow: 5px 6px 0 -0.5px #abb5c6;
+    }
+
+    .time-label {
+      margin: 0 0 2px;
+      color: #f4f6f9;
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .time-copy {
+      margin: 0;
+      color: #9ca7b6;
+      font-size: 13px;
+    }
+
+    .progress-card {
+      margin-top: 23px;
+      padding: 24px 22px 26px;
+      text-align: left;
+    }
+
+    .progress-title {
+      margin: 0 0 24px;
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr) 76px minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 14px;
+    }
+
+    .step-mark {
+      display: grid;
+      place-items: center;
+      width: 53px;
+      height: 53px;
+      flex: 0 0 auto;
+      border: 1px solid #22e46b;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #31ef7b, #16c55a);
+      box-shadow: 0 0 20px rgba(32, 223, 103, .2);
+    }
+
+    .step-mark svg { width: 29px; height: 29px; }
+
+    .step:last-child .step-mark {
+      border-color: rgba(32, 223, 103, .42);
+      background: transparent;
+      color: var(--green);
+      box-shadow: none;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .step-heading {
+      margin: 0 0 3px;
+      color: #f1f4f8;
+      font-size: 15px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .step-copy {
+      max-width: 150px;
+      margin: 0;
+      color: #929dac;
+      font-size: 13px;
+      line-height: 1.38;
+    }
+
+    .connector {
+      height: 2px;
+      margin: 0 13px;
+      background: var(--green);
+      opacity: .85;
+    }
+
+    .claim-wrap {
+      margin: 37px auto 0;
+      max-width: 657px;
+      text-align: center;
+    }
+
+    .pre-claim-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 12px;
+      padding: 10px 16px;
+      border: 1px solid rgba(224, 186, 97, .58);
+      border-radius: 9px;
+      background: rgba(224, 186, 97, .12);
+      color: #f0cf82;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .12);
+    }
+
+    .claim-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      min-height: 93px;
+      padding: 0 70px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(105deg, #16ce5c, #20dc69 48%, #14c85a);
+      box-shadow: 0 11px 27px rgba(8, 196, 79, .27), inset 0 1px 0 rgba(255, 255, 255, .3);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 29px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+
+    .claim-button:hover,
+    .claim-button:focus-visible {
+      filter: brightness(1.08);
+      box-shadow: 0 14px 31px rgba(8, 196, 79, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
+      transform: translateY(-2px);
+    }
+
+    .claim-button:active { transform: translateY(0); }
+
+    .claim-roblox-mark {
+      position: absolute;
+      left: 58px;
+      width: 37px;
+      height: 37px;
+      border: 8px solid #fff;
+      transform: rotate(14deg);
+    }
+
+    .claim-roblox-mark::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      background: #20d967;
+    }
+
+    .claim-arrow {
+      position: absolute;
+      right: 38px;
+      width: 18px;
+      height: 18px;
+      border-top: 4px solid #fff;
+      border-right: 4px solid #fff;
+      transform: rotate(45deg);
+    }
+
+    .redirect-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 25px;
+      color: #b0b8c5;
+      font-size: 14px;
+    }
+
+    .age-note {
+      max-width: 620px;
+      margin: 11px auto 0;
+      color: #d2ad5a;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .lock-icon { width: 16px; height: 18px; color: #c0c8d2; }
+
+    .trust-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 68px;
+      padding: 34px 43px 30px;
+      border-radius: 17px;
+      background: linear-gradient(145deg, rgba(27, 36, 49, .86), rgba(16, 22, 32, .96));
+    }
+
+    .legal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 32px auto 0;
+      color: #98a5b3;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .legal-footer a {
+      color: #b9c4d0;
+      text-decoration: none;
+      transition: color .2s ease;
+    }
+
+    .legal-footer a:hover,
+    .legal-footer a:focus-visible { color: #20df67; text-decoration: underline; }
+
+    .legal-separator { padding: 0px 7px 0px 7px; color: #687687; }
+    .legal-footer + .trust-card { margin-top: 32px; }
+
+    .trust-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      align-items: start;
+      gap: 14px;
+    }
+
+    .trust-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 45px;
+      color: #b5c0ce;
+    }
+
+    .trust-icon svg { width: 43px; height: 43px; }
+
+    .trust-title {
+      margin: 2px 0 5px;
+      color: #f0f3f6;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .trust-copy {
+      margin: 0;
+      color: #939eae;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      right: 22px;
+      bottom: 22px;
+      max-width: min(340px, calc(100vw - 44px));
+      padding: 13px 17px;
+      border: 1px solid rgba(32, 223, 103, .42);
+      border-radius: 10px;
+      background: #16251f;
+      color: #e5fff0;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, .38);
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.is-visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 820px) {
+      .primary-nav { gap: 20px; margin-left: 40px; }
+      .account-nav { gap: 11px; }
+      .profile-age { display: none; }
+      .reward-card { grid-template-columns: 42% 58%; }
+      .reward-details { padding-inline: 21px; }
+      h2 { font-size: 34px; }
+      .time-card { gap: 10px; padding-inline: 13px; }
+      .steps { grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) 32px minmax(0, 1fr); }
+      .step { gap: 9px; }
+      .step-mark { width: 45px; height: 45px; }
+      .step-mark svg { width: 24px; height: 24px; }
+      .step-heading { font-size: 13px; }
+      .step-copy { font-size: 12px; }
+      .connector { margin: 0 5px; }
+    }
+
+    @media (max-width: 650px) {
+      .site-header { height: auto; min-height: 63px; }
+      .header-inner { flex-wrap: wrap; gap: 14px; padding: 14px 18px; }
+      .primary-nav { order: 3; width: 100%; gap: 0; justify-content: space-between; margin: 0; padding-top: 10px; border-top: 1px solid rgba(150, 170, 197, .11); }
+      .primary-nav a { font-size: 13px; }
+      .account-nav { margin-left: auto; }
+      .balance { display: none; }
+      .page {
+        display: flex;
+        flex-direction: column;
+        padding: 24px 12px 24px;
+      }
+      body { background-attachment: scroll; }
+      .hero { order: 1; }
+      .reward-card { order: 2; display: block; min-height: 0; }
+      .claim-wrap { order: 3; }
+      .progress-card { order: 4; }
+      .legal-footer { order: 5; }
+      .trust-card { order: 6; }
+      .success-mark { width: 62px; height: 62px; margin: 0 auto 14px; }
+      .success-mark svg { width: 35px; height: 35px; }
+      h1 { font-size: clamp(28px, 8.5vw, 38px); letter-spacing: -1.2px; line-height: 1.08; overflow-wrap: anywhere; }
+      h2 { font-size: clamp(25px, 8vw, 32px); overflow-wrap: anywhere; }
+      .hero-copy { max-width: 360px; margin: 9px auto 18px; font-size: 14px; line-height: 1.4; }
+      .reward-art { min-height: 180px; border-right: 0; border-bottom: 1px solid rgba(155, 171, 195, .12); }
+      .reward-image { padding: 14px; }
+      .reward-details { padding: 18px 16px 16px; }
+      .eyebrow { font-size: 13px; }
+      .eyebrow svg { width: 18px; height: 18px; }
+      .reward-description { max-width: none; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+      .time-card { align-items: flex-start; gap: 10px; margin-top: 16px; padding: 11px 12px; }
+      .time-icon { width: 32px; height: 32px; border-width: 2px; }
+      .time-card > div { min-width: 0; }
+      .time-label { font-size: 14px; }
+      .time-copy { font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+      .progress-card { margin-top: 20px; padding: 16px 14px; }
+      .progress-title { margin-bottom: 16px; font-size: 16px; }
+      .steps { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+      .step { align-items: flex-start; gap: 10px; }
+      .step-mark { width: 40px; height: 40px; }
+      .step-mark svg { width: 21px; height: 21px; }
+      .step-copy { max-width: none; }
+      .step-heading { font-size: 14px; white-space: normal; overflow-wrap: anywhere; }
+      .step-copy { font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+      .connector { width: 2px; height: 12px; margin: -2px 0 -2px 19px; }
+      .claim-wrap { margin-top: 18px; }
+      .pre-claim-note { width: 100%; margin-bottom: 8px; padding: 8px 10px; font-size: 12px; }
+      .claim-button { min-height: 64px; padding-inline: 46px; font-size: clamp(19px, 6vw, 22px); }
+      .claim-roblox-mark { left: 18px; width: 25px; height: 25px; border-width: 5px; }
+      .claim-arrow { right: 18px; width: 14px; height: 14px; border-width: 3px; }
+      .redirect-note { align-items: flex-start; margin-top: 14px; padding-inline: 4px; font-size: 11px; line-height: 1.35; text-align: center; }
+      .age-note { margin-top: 8px; padding-inline: 4px; font-size: 10px; line-height: 1.35; }
+      .legal-footer { gap: 8px; margin-top: 22px; font-size: 11px; }
+      .legal-footer + .trust-card { margin-top: 24px; }
+      .trust-card { grid-template-columns: 1fr; gap: 16px; padding: 18px 14px; }
+      .trust-item { grid-template-columns: 36px 1fr; gap: 10px; }
+      .trust-icon { width: 36px; height: 38px; }
+      .trust-icon svg { width: 36px; height: 36px; }
+      .trust-title { font-size: 13px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+  <style id="redeem-theme-overrides">
+    /* The redeem page uses Roblox's light shell: white canvas, charcoal type, soft gray surfaces, and green reward actions. */
+    .site-header {
+      border-bottom-color: #e1e1e3;
+      background: rgba(248, 248, 249, .98);
+      box-shadow: 0 3px 15px rgba(25, 29, 35, .08);
+    }
+
+    .brand,
+    .primary-nav a,
+    .profile-link,
+    .balance,
+    .bell { color: #191b20; }
+
+    .brand-mark { border-color: #191b20; }
+    .primary-nav a:hover,
+    .primary-nav a:focus-visible { color: #20df67; }
+    .avatar { border-color: #d4d7dc; }
+    .robux-icon { border-color: #191b20; }
+    .robux-icon::after { border-color: #191b20; }
+    h1 { color: #191b20; }
+    .hero-copy { color: #5b6068; }
+
+    .confetti i {
+      background: #20df67;
+      box-shadow: 0 0 15px rgba(32, 223, 103, .12);
+    }
+    .confetti i:nth-child(1),
+    .confetti i:nth-child(7),
+    .confetti i:nth-child(14),
+    .confetti i:nth-child(15) { background: #b9c0ca; }
+
+    .success-mark {
+      background: linear-gradient(145deg, #32ed78, #12b952);
+      box-shadow: 0 0 0 10px rgba(32, 223, 103, .05), 0 0 40px rgba(32, 223, 103, .24);
+    }
+
+    .reward-card,
+    .progress-card,
+    .trust-card {
+      border-color: #e0e2e6;
+      background: linear-gradient(145deg, #ffffff, #f8f8f9);
+      box-shadow: 0 16px 38px rgba(25, 29, 35, .09), inset 0 1px 0 rgba(255, 255, 255, .8);
+    }
+
+    .reward-art {
+      border-right-color: #e0e2e6;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(46, 186, 100, .26), rgba(69, 117, 88, .17) 38%, rgba(255, 255, 255, .05) 72%),
+        linear-gradient(135deg, #eef1f5, #dfe3e9);
+    }
+
+    .reward-art::after { border-color: rgba(32, 185, 82, .18); }
+    .limited-tag { background: #20df67; }
+    .eyebrow { color: #159b4b; }
+    .reward-description { color: #5d626a; }
+
+    .time-card {
+      border-color: #e1e3e6;
+      background: #f1f3f5;
+    }
+    .time-icon { border-color: #69717c; }
+    .time-icon::before {
+      background: #69717c;
+      box-shadow: 5px 6px 0 -0.5px #69717c;
+    }
+    .time-label { color: #191b20; }
+    .time-copy { color: #6a7078; }
+
+    .step-mark {
+      border-color: #20df67;
+      background: linear-gradient(145deg, #32ed78, #12b952);
+      box-shadow: 0 0 20px rgba(32, 223, 103, .16);
+    }
+    .step:last-child .step-mark { border-color: rgba(32, 185, 82, .48); }
+    .step-heading { color: #191b20; }
+    .step-copy { color: #6a7078; }
+    .connector { background: #20df67; }
+
+    .claim-button {
+      background: linear-gradient(105deg, #12b952, #20df67 48%, #12b952);
+      box-shadow: 0 11px 27px rgba(32, 223, 103, .22), inset 0 1px 0 rgba(255, 255, 255, .32);
+    }
+    .claim-button:hover,
+    .claim-button:focus-visible {
+      box-shadow: 0 14px 31px rgba(32, 223, 103, .28), inset 0 1px 0 rgba(255, 255, 255, .32);
+    }
+    .claim-roblox-mark::after { background: #20df67; }
+    .redirect-note { color: #5b6068; }
+    .age-note { color: #9a771b; }
+
+    .trust-icon { color: #69717c; }
+    .trust-title { color: #191b20; }
+    .trust-copy { color: #6a7078; }
+    .toast {
+      border-color: rgba(32, 185, 82, .32);
+      background: #effcf3;
+      color: #18713b;
+      box-shadow: 0 16px 38px rgba(25, 29, 35, .18);
+    }
+
+    @media (max-width: 650px) {
+      .primary-nav { border-top-color: #e1e1e3; }
+      .reward-art { border-bottom-color: #e0e2e6; }
+    }
+  </style>
+  <style id="marketing-background-theme">
+    :root {
+      color-scheme: dark;
+      --bg: #05080d;
+      --surface: #111820;
+      --surface-raised: #19232e;
+      --surface-soft: #0e151d;
+      --border: rgba(208, 222, 237, .18);
+      --border-strong: rgba(208, 222, 237, .28);
+      --text: #f4f7fb;
+      --muted: #b0bbc7;
+      --muted-dark: #8793a1;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .30);
+    }
+
+    html { background: #05080d; }
+
+    body {
+      background-color: #05080d;
+      background-image:
+        linear-gradient(180deg, rgba(2, 5, 10, .68) 0%, rgba(3, 6, 11, .76) 52%, rgba(3, 6, 11, .88) 100%),
+        url("marketing_bg_05202026.jpg");
+      background-attachment: fixed;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .site-header {
+      border-bottom-color: rgba(208, 222, 237, .15);
+      background: rgba(5, 8, 13, .86);
+      box-shadow: 0 5px 24px rgba(0, 0, 0, .24);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand,
+    .primary-nav a,
+    .profile-link,
+    .balance,
+    .bell { color: #f4f7fb; }
+
+    .brand-mark,
+    .robux-icon { border-color: #f4f7fb; }
+    .robux-icon::after { border-color: #f4f7fb; }
+
+    h1 { color: #f7f9fc; text-shadow: 0 2px 20px rgba(0, 0, 0, .24); }
+    .hero-copy { color: #c1cad5; }
+
+    .reward-card,
+    .progress-card,
+    .trust-card {
+      border-color: rgba(208, 222, 237, .18);
+      background: linear-gradient(145deg, rgba(25, 35, 46, .91), rgba(9, 14, 21, .94));
+      box-shadow: 0 22px 60px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .04);
+      backdrop-filter: blur(12px);
+    }
+
+    .reward-art {
+      border-right-color: rgba(208, 222, 237, .15);
+      background:
+        radial-gradient(circle at 50% 48%, rgba(20, 171, 83, .30), rgba(8, 50, 31, .28) 38%, rgba(4, 10, 16, .18) 72%),
+        linear-gradient(135deg, rgba(10, 18, 24, .80), rgba(3, 8, 13, .84));
+    }
+
+    .reward-art::after { border-color: rgba(32, 223, 103, .18); }
+    .reward-description { color: #c0c9d4; }
+
+    .time-card {
+      border-color: rgba(208, 222, 237, .12);
+      background: rgba(32, 44, 57, .72);
+    }
+    .time-icon { border-color: #b6c2cf; }
+    .time-icon::before {
+      background: #b6c2cf;
+      box-shadow: 5px 6px 0 -0.5px #b6c2cf;
+    }
+    .time-label { color: #f4f7fb; }
+    .time-copy { color: #aeb9c6; }
+
+    .step-heading { color: #f4f7fb; }
+    .step-copy { color: #a5b0bd; }
+    .redirect-note { color: #c1cad5; }
+    .age-note { color: #e0ba61; }
+
+    .trust-icon { color: #b7c2ce; }
+    .trust-title { color: #f4f7fb; }
+    .trust-copy { color: #a5b0bd; }
+
+    .toast {
+      border-color: rgba(32, 223, 103, .38);
+      background: rgba(9, 45, 26, .94);
+      color: #dcffe9;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, .38);
+    }
+
+    @media (max-width: 650px) {
+      .reward-art { border-bottom-color: rgba(208, 222, 237, .15); }
+    }
+
+    /* Supplied header design */
+    .header {
+      width: 100%;
+      height: 52px;
+      background: #18191d;
+      display: flex;
+      align-items: center;
+      padding-left: 17px;
+    }
+
+    .logo {
+      width: 31px;
+      height: 31px;
+      position: relative;
+      flex-shrink: 0;
+      background: #ffffff;
+      transform: rotate(14deg);
+    }
+
+    .logo::after {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      left: 11px;
+      top: 11px;
+      background: #18191d;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      margin-left: 53px;
+      gap: 72px;
+    }
+
+    .nav a {
+      color: #f5f5f5;
+      text-decoration: none;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .nav a:hover { color: #cccccc; }
+
+    @media (max-width: 650px) {
+      .header {
+        min-height: 52px;
+        height: auto;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 12px;
+        overflow: hidden;
+      }
+
+      .nav {
+        flex: 1 1 0;
+        min-width: 0;
+        justify-content: space-between;
+        margin-left: 20px;
+        gap: 10px;
+      }
+
+      .nav a {
+        min-width: 0;
+        overflow: hidden;
+        font-size: clamp(12px, 4.2vw, 16px);
+        text-overflow: ellipsis;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .header { padding-inline: 10px; }
+      .nav { margin-left: 14px; gap: 8px; }
+      .nav a { font-size: 13px; }
+    }
+
+    /* Compact phone layout: keep every flow element, reduce vertical space. */
+    @media (max-width: 760px) {
+      .header {
+        min-height: 88px;
+        height: auto;
+        align-content: center;
+        padding: 10px;
+        gap: 8px;
+      }
+
+      .nav {
+        order: 2;
+        flex: 0 0 100%;
+        width: 100%;
+        min-width: 0;
+        justify-content: space-between;
+        margin: 3px 0 0;
+        padding-top: 8px;
+        border-top: 1px solid rgba(208, 222, 237, .15);
+        gap: 6px;
+      }
+
+      .nav a {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: visible;
+        font-size: 13px;
+        text-overflow: clip;
+      }
+
+      .page {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 16px 10px 20px;
+      }
+
+      .hero { order: 1; }
+      .reward-card { order: 2; display: block; width: 100%; min-width: 0; min-height: 0; }
+      .reward-art, .reward-details, .progress-card, .claim-wrap, .trust-card { min-width: 0; max-width: 100%; }
+      .claim-wrap { order: 3; }
+      .progress-card { order: 4; }
+      .legal-footer { order: 5; }
+      .trust-card { order: 6; }
+
+      .success-mark { width: 52px; height: 52px; margin-bottom: 10px; }
+      .success-mark svg { width: 30px; height: 30px; }
+      h1 { max-width: 100%; font-size: clamp(25px, 7.5vw, 34px); letter-spacing: -.8px; overflow-wrap: anywhere; }
+      .hero-copy { max-width: 350px; margin: 7px auto 12px; font-size: 13px; line-height: 1.35; }
+
+      .reward-art { min-height: 145px; }
+      .reward-image { padding: 10px; }
+      .limited-tag { top: 12px; left: 14px; padding: 5px 7px 4px; font-size: 10px; }
+      .reward-details { padding: 14px; }
+      .eyebrow { gap: 5px; font-size: 12px; }
+      .eyebrow svg { width: 16px; height: 16px; }
+      h2 { margin: 5px 0 7px; font-size: clamp(23px, 7vw, 30px); }
+      .reward-description { font-size: 13px; line-height: 1.32; }
+      .time-card { gap: 8px; margin-top: 12px; padding: 8px 10px; }
+      .time-icon { width: 28px; height: 28px; border-width: 2px; }
+      .time-label { font-size: 13px; }
+      .time-copy { font-size: 11px; line-height: 1.3; }
+
+      .progress-card { margin-top: 14px; padding: 12px; }
+      .progress-title { margin-bottom: 10px; font-size: 14px; }
+      .steps {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr) 12px minmax(0, 1fr);
+        align-items: start;
+        gap: 0;
+      }
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        min-width: 0;
+        text-align: center;
+      }
+      .step-mark { width: 34px; height: 34px; }
+      .step-mark svg { width: 18px; height: 18px; }
+      .step-heading { max-width: 100%; font-size: 11px; white-space: normal; }
+      .step-copy { max-width: 100%; font-size: 9px; line-height: 1.25; }
+      .connector { align-self: start; width: auto; height: 2px; margin: 16px 1px 0; }
+
+      .claim-wrap { margin-top: 12px; }
+      .pre-claim-note { margin-bottom: 6px; padding: 6px 8px; font-size: 11px; }
+      .claim-button { min-height: 56px; padding-inline: 40px; font-size: 18px; }
+      .claim-roblox-mark { left: 16px; width: 22px; height: 22px; border-width: 4px; }
+      .claim-roblox-mark::after { inset: 4px; }
+      .claim-arrow { right: 16px; width: 12px; height: 12px; border-width: 3px; }
+      .redirect-note { margin-top: 10px; font-size: 10px; }
+      .age-note { margin-top: 6px; font-size: 9px; }
+
+      .legal-footer { gap: 6px; margin-top: 14px; font-size: 10px; }
+      .legal-footer + .trust-card { margin-top: 18px; }
+      .trust-card { gap: 10px; padding: 12px; }
+      .trust-item { grid-template-columns: 30px 1fr; gap: 8px; }
+      .trust-icon { width: 30px; height: 32px; }
+      .trust-icon svg { width: 30px; height: 30px; }
+      .trust-title { font-size: 11px; }
+    }
+
+  </style>
+  <style id="responsive-layout">
+    /*
+     * Responsive layout contract:
+     * - mobile is the default and every major section can shrink to the viewport;
+     * - tablet restores the two-column reward composition;
+     * - desktop restores the original spacing and proportions.
+     */
+    html,
+    body {
+      min-width: 0;
+    }
+
+    body {
+      overflow-wrap: normal;
+    }
+
+    .header,
+    .nav,
+    .page,
+    .hero,
+    .reward-card,
+    .reward-art,
+    .reward-details,
+    .progress-card,
+    .steps,
+    .step,
+    .claim-wrap,
+    .trust-card,
+    .trust-item {
+      min-width: 0;
+    }
+
+    .header {
+      width: 100%;
+      min-height: 52px;
+      height: auto;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: clamp(10px, 3vw, 20px);
+      padding: 10px clamp(10px, 3.5vw, 18px);
+      overflow: visible;
+    }
+
+    .logo {
+      width: 31px;
+      height: 31px;
+      flex: 0 0 31px;
+      margin: 0 2px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1 1 auto;
+      order: initial;
+      width: auto;
+      margin: 0;
+      gap: clamp(8px, 3vw, 18px);
+    }
+
+    .nav a {
+      min-width: 0;
+      flex: 0 1 auto;
+      font-size: clamp(12px, 3.2vw, 15px);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: clamp(18px, 5vw, 30px) clamp(12px, 4vw, 24px) 36px;
+    }
+
+    .confetti {
+      inset: 8px 0 auto;
+      height: 180px;
+      opacity: .45;
+    }
+
+    .hero { order: 1; }
+
+    .success-mark {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 10px;
+    }
+
+    .success-mark svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    h1 {
+      max-width: 100%;
+      font-size: clamp(28px, 8.5vw, 38px);
+      letter-spacing: -.9px;
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 370px;
+      margin: 8px auto 18px;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .reward-card {
+      order: 2;
+      display: block;
+      width: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .reward-art {
+      width: 100%;
+      height: clamp(155px, 43vw, 210px);
+      min-height: 0;
+      border-right: 0;
+      border-bottom: 1px solid rgba(208, 222, 237, .15);
+    }
+
+    .reward-art::after {
+      inset: 12px;
+    }
+
+    .limited-tag {
+      top: 12px;
+      left: 14px;
+      padding: 5px 8px 4px;
+      font-size: 10px;
+    }
+
+    .crown {
+      width: 78%;
+      max-width: 300px;
+      max-height: 86%;
+      height: auto;
+    }
+
+    .reward-image {
+      max-width: 100%;
+      max-height: 100%;
+      padding: 10px;
+      object-fit: contain;
+    }
+
+    .reward-details {
+      width: 100%;
+      padding: clamp(16px, 4vw, 24px);
+    }
+
+    .eyebrow {
+      gap: 5px;
+      font-size: 12px;
+    }
+
+    .eyebrow svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    h2 {
+      max-width: 100%;
+      margin: 6px 0 8px;
+      font-size: clamp(28px, 8vw, 40px);
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+
+    .reward-description {
+      max-width: none;
+      font-size: clamp(14px, 3.8vw, 16px);
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .time-card {
+      width: 100%;
+      min-width: 0;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: clamp(16px, 5vw, 30px);
+      padding: 12px;
+    }
+
+    .time-card > div {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .time-icon {
+      width: 32px;
+      height: 32px;
+      border-width: 2px;
+    }
+
+    .time-label {
+      font-size: clamp(14px, 3.8vw, 16px);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .time-copy {
+      font-size: clamp(12px, 3.2vw, 13px);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .progress-card {
+      order: 3;
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .progress-title {
+      margin-bottom: 14px;
+      font-size: 16px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      align-items: start;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .step-mark {
+      width: 40px;
+      height: 40px;
+    }
+
+    .step-mark svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .step-heading {
+      margin-bottom: 3px;
+      font-size: 14px;
+      line-height: 1.25;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .step-copy {
+      max-width: none;
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .connector {
+      width: 2px;
+      height: 16px;
+      margin: -1px 0 -1px 19px;
+    }
+
+    .claim-wrap {
+      order: 4;
+      width: 100%;
+      max-width: 657px;
+      margin: clamp(16px, 4vw, 28px) auto 0;
+    }
+
+    .pre-claim-note {
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+
+    .claim-button {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      min-height: 62px;
+      padding: 0 48px;
+      font-size: clamp(19px, 6vw, 24px);
+      line-height: 1.2;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .claim-roblox-mark {
+      left: 18px;
+      width: 25px;
+      height: 25px;
+      border-width: 5px;
+    }
+
+    .claim-roblox-mark::after {
+      inset: 4px;
+    }
+
+    .claim-arrow {
+      right: 18px;
+      width: 14px;
+      height: 14px;
+      border-width: 3px;
+    }
+
+    .redirect-note {
+      max-width: 100%;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding-inline: 4px;
+      font-size: 11px;
+      line-height: 1.4;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .lock-icon {
+      flex: 0 0 auto;
+    }
+
+    .age-note {
+      max-width: 100%;
+      margin-top: 7px;
+      padding-inline: 4px;
+      font-size: 10px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .legal-footer {
+      order: 5;
+      flex-wrap: wrap;
+      max-width: 100%;
+      gap: 6px 8px;
+      margin-top: 20px;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .legal-footer a {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .trust-card {
+      order: 6;
+      grid-template-columns: 1fr;
+      width: 100%;
+      gap: 14px;
+      margin-top: 24px;
+      padding: 18px 16px;
+    }
+
+    .legal-footer + .trust-card {
+      margin-top: 24px;
+    }
+
+    .trust-item {
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .trust-icon {
+      width: 36px;
+      height: 38px;
+    }
+
+    .trust-icon svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .trust-title {
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .trust-title-short {
+      display: none;
+    }
+
+    .toast {
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      width: auto;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (min-width: 480px) {
+      .header {
+        padding-inline: 14px;
+        gap: 14px;
+      }
+
+      .nav {
+        gap: 14px;
+      }
+
+      .nav a {
+        font-size: 14px;
+      }
+
+      .page {
+        padding: 24px 16px 42px;
+      }
+
+      .success-mark {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 12px;
+      }
+
+      .success-mark svg {
+        width: 36px;
+        height: 36px;
+      }
+
+      h1 {
+        font-size: clamp(34px, 8vw, 46px);
+      }
+
+      .hero-copy {
+        font-size: 15px;
+      }
+
+      .reward-art {
+        height: 190px;
+      }
+
+      .reward-details {
+        padding: 22px;
+      }
+
+      .progress-card {
+        padding: 20px;
+      }
+
+      .claim-button {
+        min-height: 74px;
+        font-size: 24px;
+      }
+
+      .claim-roblox-mark {
+        left: 22px;
+      }
+
+      .claim-arrow {
+        right: 22px;
+      }
+
+      .legal-footer {
+        font-size: 12px;
+      }
+    }
+
+    /* Compact, side-by-side reward summary for phones. */
+    @media (max-width: 767px) {
+      .page {
+        padding: 12px clamp(12px, 4vw, 18px) 24px;
+      }
+
+      .confetti {
+        inset: 0 0 auto;
+        height: 124px;
+        opacity: .35;
+      }
+
+      .success-mark {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 6px;
+      }
+
+      .success-mark svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      h1 {
+        font-size: clamp(27px, 7.6vw, 34px);
+        letter-spacing: -.8px;
+      }
+
+      .hero-copy {
+        max-width: 335px;
+        margin: 5px auto 12px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .reward-card {
+        display: grid;
+        grid-template-columns: clamp(110px, 32vw, 140px) minmax(0, 1fr);
+        align-items: start;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .reward-art {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 1;
+        align-self: start;
+        border: 1px solid rgba(208, 222, 237, .15);
+        border-radius: 10px;
+      }
+
+      .reward-art::after {
+        inset: 6px;
+        border-radius: 6px;
+      }
+
+      .limited-tag {
+        top: 7px;
+        left: 7px;
+        padding: 4px 5px 3px;
+        font-size: 8px;
+        letter-spacing: .5px;
+      }
+
+      .crown {
+        width: 78%;
+        max-width: none;
+        max-height: 78%;
+      }
+
+      .reward-image {
+        padding: 6px;
+      }
+
+      .reward-details {
+        min-height: 0;
+        padding: 0;
+      }
+
+      .eyebrow {
+        gap: 4px;
+        font-size: 10px;
+      }
+
+      .eyebrow svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      h2 {
+        margin: 3px 0 5px;
+        font-size: clamp(22px, 6.2vw, 26px);
+        letter-spacing: -.8px;
+      }
+
+      .reward-description {
+        font-size: 11.5px;
+        line-height: 1.3;
+      }
+
+      .time-card {
+        gap: 7px;
+        margin-top: 8px;
+        padding: 7px 8px;
+        border-radius: 9px;
+      }
+
+      .time-icon {
+        width: 25px;
+        height: 25px;
+      }
+
+      .time-icon::before {
+        height: 8px;
+        transform: translateY(-3px);
+        box-shadow: 4px 5px 0 -.5px #b6c2cf;
+      }
+
+      .time-label {
+        margin-bottom: 1px;
+        font-size: 12px;
+      }
+
+      .time-copy {
+        font-size: 10px;
+        line-height: 1.25;
+      }
+
+      .progress-card {
+        margin-top: 10px;
+        padding: 12px;
+      }
+
+      .progress-title {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr) 14px minmax(0, 1fr);
+        align-items: start;
+        gap: 0;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        text-align: center;
+      }
+
+      .step-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .step-mark svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .step:last-child .step-mark {
+        font-size: 15px;
+      }
+
+      .step-heading {
+        margin: 0;
+        font-size: 10px;
+        line-height: 1.15;
+      }
+
+      .step-copy {
+        font-size: 10px;
+        line-height: 1.2;
+      }
+
+      .connector {
+        align-self: start;
+        width: auto;
+        height: 2px;
+        margin: 15px 1px 0;
+      }
+
+      .claim-wrap {
+        margin-top: 12px;
+      }
+
+      .pre-claim-note {
+        margin-bottom: 6px;
+        padding: 5px 8px;
+        font-size: 10px;
+        line-height: 1.25;
+      }
+
+      .claim-button {
+        height: 52px;
+        min-height: 52px;
+        padding-inline: 40px;
+        font-size: 18px;
+      }
+
+      .claim-roblox-mark {
+        left: 14px;
+        width: 20px;
+        height: 20px;
+        border-width: 4px;
+      }
+
+      .claim-roblox-mark::after {
+        inset: 3px;
+      }
+
+      .claim-arrow {
+        right: 14px;
+        width: 12px;
+        height: 12px;
+      }
+
+      .redirect-note {
+        margin-top: 8px;
+        font-size: 10px;
+        line-height: 1.25;
+      }
+
+      .age-note {
+        margin-top: 5px;
+        font-size: 9px;
+        line-height: 1.25;
+      }
+
+      .legal-footer {
+        margin-top: 13px;
+        font-size: 10px;
+      }
+
+      .trust-card,
+      .legal-footer + .trust-card {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+        margin-top: 14px;
+        padding: 10px 8px;
+      }
+
+      .trust-item {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 3px;
+        text-align: center;
+      }
+
+      .trust-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .trust-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .trust-title {
+        margin: 0;
+        font-size: 10px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .trust-title-full {
+        display: none;
+      }
+
+      .trust-title-short {
+        display: inline;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .header {
+        padding: 10px 24px;
+        gap: 22px;
+      }
+
+      .nav {
+        justify-content: flex-start;
+        gap: 26px;
+      }
+
+      .nav a {
+        font-size: 16px;
+      }
+
+      .page {
+        padding: 32px 24px 48px;
+      }
+
+      .success-mark {
+        width: 76px;
+        height: 76px;
+        margin-bottom: 18px;
+      }
+
+      .success-mark svg {
+        width: 42px;
+        height: 42px;
+      }
+
+      h1 {
+        font-size: clamp(44px, 5.25vw, 58px);
+        letter-spacing: -2px;
+      }
+
+      .hero-copy {
+        max-width: 525px;
+        margin: 12px auto 24px;
+        font-size: 16px;
+      }
+
+      .reward-card {
+        display: grid;
+        grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+        min-height: 290px;
+      }
+
+      .reward-art {
+        height: auto;
+        min-height: 290px;
+        border-right: 1px solid rgba(208, 222, 237, .15);
+        border-bottom: 0;
+      }
+
+      .reward-details {
+        padding: 28px 24px 22px;
+      }
+
+      h2 {
+        font-size: clamp(34px, 4vw, 40px);
+      }
+
+      .time-card {
+        margin-top: 28px;
+      }
+
+      .progress-card {
+        padding: 22px 20px;
+      }
+
+      .progress-title {
+        margin-bottom: 20px;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px minmax(0, 1fr);
+        align-items: center;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .step-mark {
+        width: 46px;
+        height: 46px;
+      }
+
+      .step-mark svg {
+        width: 25px;
+        height: 25px;
+      }
+
+      .step-heading {
+        font-size: 13px;
+      }
+
+      .step-copy {
+        font-size: 12px;
+      }
+
+      .connector {
+        width: auto;
+        height: 2px;
+        margin: 0 5px;
+      }
+
+      .claim-wrap {
+        margin-top: 28px;
+      }
+
+      .claim-button {
+        min-height: 82px;
+        font-size: 26px;
+      }
+
+      .redirect-note {
+        margin-top: 18px;
+        font-size: 13px;
+      }
+
+      .age-note {
+        font-size: 11px;
+      }
+
+      .legal-footer {
+        margin-top: 28px;
+      }
+
+      .trust-card {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        margin-top: 32px;
+        padding: 24px;
+      }
+
+      .legal-footer + .trust-card {
+        margin-top: 32px;
+      }
+
+      .trust-item {
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .trust-icon {
+        width: 40px;
+        height: 43px;
+      }
+
+      .trust-icon svg {
+        width: 40px;
+        height: 40px;
+      }
+
+      .trust-title {
+        font-size: 14px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header {
+        height: 52px;
+        padding: 0 17px;
+        gap: 0;
+      }
+
+      .nav {
+        margin-left: 53px;
+        gap: 72px;
+      }
+
+      .nav a {
+        font-size: 20px;
+      }
+
+      .page {
+        padding: 51px 24px 42px;
+      }
+
+      .confetti {
+        inset: 31px 0 auto;
+        height: 320px;
+        opacity: .85;
+      }
+
+      .success-mark {
+        width: 91px;
+        height: 91px;
+        margin: 2px auto 25px;
+      }
+
+      .success-mark svg {
+        width: 49px;
+        height: 49px;
+      }
+
+      h1 {
+        font-size: clamp(35px, 5.25vw, 58px);
+        letter-spacing: -2.5px;
+      }
+
+      .hero-copy {
+        margin: 14px auto 27px;
+        font-size: 17px;
+      }
+
+      .reward-card {
+        grid-template-columns: 44% 56%;
+        min-height: 316px;
+      }
+
+      .reward-art {
+        min-height: 316px;
+      }
+
+      .reward-details {
+        padding: 33px 25px 22px;
+      }
+
+      .eyebrow {
+        gap: 7px;
+        font-size: 15px;
+      }
+
+      .eyebrow svg {
+        width: 21px;
+        height: 21px;
+      }
+
+      h2 {
+        margin: 9px 0 13px;
+        font-size: 40px;
+      }
+
+      .reward-description {
+        max-width: 345px;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      .time-card {
+        margin-top: 36px;
+        padding: 15px 20px;
+      }
+
+      .time-icon {
+        width: 39px;
+        height: 39px;
+        border-width: 3px;
+      }
+
+      .progress-card {
+        margin-top: 23px;
+        padding: 24px 22px 26px;
+      }
+
+      .progress-title {
+        margin-bottom: 24px;
+        font-size: 17px;
+      }
+
+      .steps {
+        grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr) 76px minmax(0, 1fr);
+      }
+
+      .step {
+        gap: 14px;
+      }
+
+      .step-mark {
+        width: 53px;
+        height: 53px;
+      }
+
+      .step-mark svg {
+        width: 29px;
+        height: 29px;
+      }
+
+      .step-heading {
+        font-size: 15px;
+      }
+
+      .step-copy {
+        max-width: 150px;
+        font-size: 13px;
+      }
+
+      .connector {
+        margin: 0 13px;
+      }
+
+      .claim-wrap {
+        margin-top: 37px;
+      }
+
+      .pre-claim-note {
+        width: fit-content;
+        margin-bottom: 12px;
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+
+      .claim-button {
+        min-height: 93px;
+        padding: 0 70px;
+        font-size: 29px;
+      }
+
+      .claim-roblox-mark {
+        left: 58px;
+        width: 37px;
+        height: 37px;
+        border-width: 8px;
+      }
+
+      .claim-roblox-mark::after {
+        inset: 5px;
+      }
+
+      .claim-arrow {
+        right: 38px;
+        width: 18px;
+        height: 18px;
+        border-width: 4px;
+      }
+
+      .redirect-note {
+        margin-top: 25px;
+        font-size: 14px;
+      }
+
+      .age-note {
+        margin-top: 11px;
+        font-size: 12px;
+      }
+
+      .legal-footer {
+        margin-top: 32px;
+        font-size: 12px;
+      }
+
+      .trust-card {
+        gap: 30px;
+        margin-top: 32px;
+        padding: 34px 43px 30px;
+      }
+
+      .trust-item {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .trust-icon {
+        width: 42px;
+        height: 45px;
+      }
+
+      .trust-icon svg {
+        width: 43px;
+        height: 43px;
+      }
+
+      .trust-title {
+        font-size: 15px;
+      }
+
+      .toast {
+        right: 22px;
+        bottom: 22px;
+        left: auto;
+        max-width: min(340px, calc(100vw - 44px));
+        margin: 0;
+      }
+    }
+
+    .verify-button {
+      display: inline-flex;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      min-height: 58px;
+      margin-top: 0;
+      padding: 0 48px;
+      border: 1px solid rgba(255, 132, 142, .7);
+      border-radius: 12px;
+      background: linear-gradient(105deg, #a9162a, #ed4558 48%, #b91d32);
+      box-shadow: 0 11px 26px rgba(174, 23, 45, .3), inset 0 1px 0 rgba(255, 255, 255, .24);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: clamp(18px, 5vw, 23px);
+      font-weight: 800;
+      letter-spacing: -.35px;
+      line-height: 1.2;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transform: translateY(-10px) scale(.96);
+      visibility: hidden;
+      max-height: 0;
+      transition: opacity .24s ease, transform .28s cubic-bezier(.22, .8, .28, 1), max-height .28s ease, margin-top .28s ease, visibility 0s linear .28s;
+    }
+
+    .verify-button.is-visible {
+      margin-top: 12px;
+      max-height: 90px;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+      transition: opacity .24s ease, transform .28s cubic-bezier(.22, .8, .28, 1), max-height .28s ease, margin-top .28s ease;
+      animation: verify-button-pop .45s cubic-bezier(.22, .8, .28, 1) both;
+    }
+
+    .verify-button:hover,
+    .verify-button:focus-visible {
+      border-color: #ffb0b8;
+      background: linear-gradient(105deg, #bd1e35, #f05263 48%, #cc2940);
+      box-shadow: 0 14px 31px rgba(174, 23, 45, .4), inset 0 1px 0 rgba(255, 255, 255, .28);
+      outline: none;
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .verify-button:active { transform: translateY(0) scale(.98); }
+
+    .verify-button.is-loading,
+    .verify-button.is-loading:hover,
+    .verify-button.is-loading:focus-visible {
+      cursor: wait;
+      filter: brightness(.94);
+      outline: none;
+      pointer-events: none;
+      transform: none;
+    }
+
+    .verify-button.is-loading::after {
+      content: "";
+      width: 19px;
+      height: 19px;
+      border: 3px solid rgba(255, 255, 255, .42);
+      border-top-color: #fff;
+      border-radius: 50%;
+      transform: none;
+      animation: verify-button-spin .75s linear infinite;
+    }
+
+    @keyframes verify-button-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .verify-button::after {
+      content: "→";
+      position: absolute;
+      right: 20px;
+      font-size: 25px;
+      line-height: 1;
+      transition: transform .2s ease;
+    }
+
+    .verify-button:hover::after,
+    .verify-button:focus-visible::after { transform: translateX(3px); }
+
+    @keyframes verify-button-pop {
+      0% { opacity: 0; transform: translateY(-12px) scale(.92); }
+      65% { opacity: 1; transform: translateY(2px) scale(1.015); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 767px) {
+      .verify-button {
+        min-height: 50px;
+        padding-inline: 38px;
+        border-radius: 10px;
+        font-size: 17px;
+      }
+
+      .verify-button::after {
+        right: 15px;
+        font-size: 21px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .verify-button,
+      .verify-button.is-visible {
+        transition: none;
+        animation: none;
+      }
+
+      .verify-button.is-loading::after { animation: none; }
+    }
+
+    /* Progress-step motion: completed reward, waiting verification, unchanged locked step. */
+    .step--complete .step-mark {
+      animation: reward-complete-pulse 2.6s ease-in-out infinite;
+    }
+
+    .step--complete .completion-check {
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      animation: completion-check-draw .7s ease-out .12s both;
+    }
+
+    .step--pending .step-mark {
+      animation: verification-pending-pulse 1.8s ease-in-out infinite;
+    }
+
+    .step-mark--pending svg {
+      overflow: visible;
+      transform-origin: center;
+      animation: verification-spinner 1.05s linear infinite;
+    }
+
+    .loader-track {
+      stroke: rgba(255, 255, 255, .3);
+      stroke-width: 3;
+    }
+
+    .loader-spinner {
+      stroke: #fff;
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+
+    @keyframes reward-complete-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(32, 223, 103, .16); }
+      50% { box-shadow: 0 0 28px rgba(32, 223, 103, .4); }
+    }
+
+    @keyframes completion-check-draw {
+      from { stroke-dashoffset: 30; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes verification-pending-pulse {
+      0%, 100% { box-shadow: 0 0 16px rgba(32, 223, 103, .14); }
+      50% { box-shadow: 0 0 25px rgba(32, 223, 103, .38); }
+    }
+
+    @keyframes verification-spinner {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .step--complete .step-mark,
+      .step--complete .completion-check,
+      .step--pending .step-mark,
+      .step-mark--pending svg {
+        animation: none;
+      }
+
+      .step--complete .completion-check { stroke-dashoffset: 0; }
+    }
+
+    /* Keep the age notice above the security message with a clean visual gap. */
+    .age-note {
+      margin-top: 13px;
+    }
+
+    .age-note + .redirect-note {
+      margin-top: 15px;
+    }
+
+    @media (max-width: 767px) {
+      .age-note { margin-top: 9px; }
+      .age-note{ margin-bottom: 25px;}
+      .age-note + .redirect-note { margin-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a class="logo" href="https://www.roblox.com/Login" aria-label="Return to redeem page"></a>
+
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="https://www.roblox.com/charts">Charts</a>
+      <a href="https://www.roblox.com/catalog">Marketplace</a>
+      <a href="https://create.roblox.com/">Create</a>
+      <a href="https://www.roblox.com/upgrades/robux?ctx=navpopover">Robux</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="confetti" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="success-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="m11 24.5 8.1 8L37 14.7" stroke="white" stroke-width="5.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 id="page-title">Your reward is <span>ready!</span></h1>
+      <p class="hero-copy">Congratulations! You've successfully unlocked an exclusive reward. Follow the final step below to claim it in Roblox.</p>
+    </section>
+
+    <section class="reward-card panel" aria-labelledby="reward-title">
+      <div class="reward-art">
+        <span class="limited-tag">LIMITED</span>
+        <img class="reward-image" id="reward-image" alt="">
+        <svg class="crown" viewBox="0 0 420 320" fill="none" aria-label="Green Shadow Crown" role="img">
+          <defs>
+            <linearGradient id="crownMetal" x1="90" y1="70" x2="330" y2="262" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#b8ffd1"/>
+              <stop offset=".28" stop-color="#2acb68"/>
+              <stop offset=".6" stop-color="#1d6840"/>
+              <stop offset="1" stop-color="#111b16"/>
+            </linearGradient>
+            <linearGradient id="crownEdge" x1="110" y1="100" x2="330" y2="230" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#137a43"/>
+              <stop offset=".5" stop-color="#63f298"/>
+              <stop offset="1" stop-color="#1f5b39"/>
+            </linearGradient>
+            <linearGradient id="gem" x1="195" y1="150" x2="240" y2="220" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#d9ffe5"/>
+              <stop offset=".35" stop-color="#21c966"/>
+              <stop offset="1" stop-color="#168243"/>
+            </linearGradient>
+            <filter id="greenGlow" x="-30%" y="-30%" width="160%" height="170%">
+              <feGaussianBlur stdDeviation="13" result="blur"/>
+              <feColorMatrix in="blur" type="matrix" values=".55 0 0 0 .2 0 .1 0 0 .02 0 0 .9 0 .8 0 0 0 .8 0"/>
+            </filter>
+          </defs>
+          <path d="M62 134c58-17 237-17 296 0l-18 111c-60 33-200 33-260 0L62 134Z" fill="#143e29" opacity=".9" filter="url(#greenGlow)"/>
+          <path d="m72 120 43-25 30 64 49-94 32 91 56-91 25 94 45-63 18 128c-55 34-194 38-276 0L72 120Z" fill="url(#crownMetal)" stroke="#111a14" stroke-width="9" stroke-linejoin="round"/>
+          <path d="m111 103 34 55 48-92 33 91 56-92 24 97 42-59" stroke="#1a9a54" stroke-width="16" stroke-linejoin="round"/>
+          <path d="M73 144c64 30 219 31 276 1l-12 83c-63 30-193 32-250 0l-14-84Z" fill="#121b16" stroke="#111a14" stroke-width="9"/>
+          <path d="M78 150c62 27 207 29 265 2l-7 43c-65 26-189 26-251 0l-7-45Z" fill="url(#crownEdge)"/>
+          <path d="m152 153 58 33 59-34-10 65-48 51-51-52-8-63Z" fill="#142c1e" stroke="#111a14" stroke-width="8" stroke-linejoin="round"/>
+          <path d="m208 181 25 17-24 40-26-40 25-17Z" fill="url(#gem)" stroke="#5bea8d" stroke-width="4"/>
+          <path d="m99 164 31 10 16 49-33-18-14-41ZM311 164l-32 10-15 49 33-18 14-41Z" fill="#141d17" stroke="#2d9c5b" stroke-width="5"/>
+          <path d="M78 224c67 24 191 25 265 1" stroke="#37d976" stroke-opacity=".66" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="reward-details">
+        <div class="eyebrow">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.3 2.9 6 6.6.9-4.8 4.7 1.2 6.6-5.9-3.1-5.9 3.1 1.2-6.6-4.8-4.7 6.6-.9L12 2.3Z"/></svg>
+          EXCLUSIVE ITEM
+        </div>
+        <h2 id="reward-title">Shadow Crown</h2>
+        <p class="reward-description" id="reward-description">A legendary crown infused with shadows.
+Only available through special events.</p>
+
+        <div class="time-card">
+          <span class="time-icon" aria-hidden="true"></span>
+          <div>
+            <p class="time-label">Limited Time Reward</p>
+            <p class="time-copy">This reward may expire soon. Claim it now!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="progress-card panel" aria-labelledby="progress-title">
+      <h2 class="progress-title" id="progress-title">Claim progress</h2>
+      <div class="steps">
+        <div class="step step--complete">
+          <span class="step-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path class="completion-check" d="m7 16.5 6 6L25.5 9" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><p class="step-heading">Reward Selected</p><p class="step-copy">✅ Completed</p></div>
+        </div>
+        <div class="connector" aria-hidden="true"></div>
+        <div class="step step--pending">
+          <span class="step-mark step-mark--pending" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle class="loader-track" cx="16" cy="16" r="11"/><path class="loader-spinner" d="M16 5a11 11 0 0 1 11 11"/></svg></span>
+          <div><p class="step-heading">Verification Complete</p><p class="step-copy">⏳ Pending</p></div>
+        </div>
+        <div class="connector" aria-hidden="true"></div>
+        <div class="step">
+          <span class="step-mark" aria-label="Step 3">3</span>
+          <div><p class="step-heading">Open in Roblox</p><p class="step-copy">🔒 Locked</p></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="claim-wrap">
+      <p class="pre-claim-note">Click 'Open in Roblox' to complete verification and claim your reward.</p>
+      <a class="claim-button" href="redeem.html#reward" id="claim-button" aria-controls="verify-button" aria-expanded="false">
+        <span class="claim-roblox-mark" aria-hidden="true"></span>
+        <span>Open in Roblox</span>
+        <span class="claim-arrow" aria-hidden="true"></span>
+      </a>
+      <!-- Change this href to any verification destination you want to use. -->
+      <a class="verify-button" id="verify-button" href="https://example.com/verify" aria-hidden="true"><span class="verify-label">Verify</span></a>
+      <p class="age-note" role="note">⚠️ Age verification required before opening Roblox.</p>
+      <p class="redirect-note">
+        <svg class="lock-icon" viewBox="0 0 18 20" fill="none" aria-hidden="true"><rect x="2" y="8" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 8V5.5a4 4 0 0 1 8 0V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+         Secured by Roblox • Your data is protected
+      </p>
+    </div>
+
+    <nav class="legal-footer" aria-label="Legal and support links">
+      <a href="https://en.help.roblox.com/hc/en-us/articles/115004630823-Roblox-Privacy-and-Cookie-Policy">Privacy Policy</a>
+      <span class="legal-separator" aria-hidden="true">•</span>
+      <a href="https://en.help.roblox.com/hc/en-us/articles/115004647846-Roblox-Terms-of-Use">Terms of Service</a>
+      <span class="legal-separator" aria-hidden="true">•</span>
+      <a href="https://en.help.roblox.com/hc/en-us">Support</a>
+    </nav>
+
+    <section class="trust-card panel" aria-label="Trust information">
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="m24 4 17 6v12c0 10.8-6.8 18.9-17 22-10.2-3.1-17-11.2-17-22V10l17-6Z" fill="currentColor" opacity=".88"/><path d="m14 24 6.2 6.2L34.5 16" stroke="#17202d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div><p class="trust-title"><span class="trust-title-full">Secured • Verified Distribution</span><span class="trust-title-short">Secure</span></p></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><circle cx="17" cy="16" r="8"/><circle cx="33" cy="18" r="7" opacity=".8"/><path d="M4 40c0-8 5.8-12 13-12s13 4 13 12H4Z"/><path d="M27 29c2-2 4.7-3 8-3 5.7 0 9 3.3 9 10H31c-.3-3-1.7-5.3-4-7Z" opacity=".8"/></svg></span>
+        <div><p class="trust-title"><span class="trust-title-full">Trusted by the Roblox community</span><span class="trust-title-short">Trusted</span></p></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="currentColor"><path d="m11 7 30 7-7 30-30-7 7-30Z"/><path d="m22 20 8 2-2 8-8-2 2-8Z" fill="#17202d"/></svg></span>
+        <div><p class="trust-title"><span class="trust-title-full">Roblox <br><span>All rights reserved</span></span><span class="trust-title-short">Roblox</span></p></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Verification is ready.</div>
+
+  <script>
+    (() => {
+      const claimButton = document.querySelector('#claim-button');
+      const verifyButton = document.querySelector('#verify-button');
+      const verifyLabel = verifyButton.querySelector('.verify-label');
+      const preClaimNote = document.querySelector('.pre-claim-note');
+      const toast = document.querySelector('#toast');
+      const rewardArt = document.querySelector('.reward-art');
+      const rewardImage = document.querySelector('#reward-image');
+      const rewardTitle = document.querySelector('#reward-title');
+      const rewardDescription = document.querySelector('#reward-description');
+
+      try {
+        const savedReward = sessionStorage.getItem('rewardData');
+        if (savedReward) {
+          const reward = JSON.parse(savedReward);
+          if (typeof reward.title === 'string' && reward.title.trim()) rewardTitle.textContent = reward.title.trim();
+          if (typeof reward.description === 'string' && reward.description.trim()) rewardDescription.textContent = reward.description.trim();
+          if (typeof reward.image === 'string' && reward.image.trim()) {
+            rewardImage.src = reward.image;
+            rewardImage.alt = reward.title || 'Reward image';
+            rewardArt.classList.add('has-reward-image');
+          }
+        }
+      } catch {
+        sessionStorage.removeItem('rewardData');
+      }
+
+      const showVerifyButton = ({ announce = true } = {}) => {
+        try {
+          sessionStorage.setItem('verifyButtonVisible', 'true');
+        } catch {
+          // Continue even when browser storage is unavailable.
+        }
+
+        claimButton.setAttribute('aria-expanded', 'true');
+        preClaimNote.textContent = 'Verification is required before claim your reward in Roblox.';
+        verifyButton.setAttribute('aria-hidden', 'false');
+        verifyButton.classList.add('is-visible');
+        if (announce) {
+          toast.textContent = 'Verification required. Continue with the button below.';
+          toast.classList.add('is-visible');
+          window.requestAnimationFrame(() => verifyButton.focus({ preventScroll: true }));
+          window.setTimeout(() => toast.classList.remove('is-visible'), 2400);
+        } else {
+          toast.classList.remove('is-visible');
+        }
+      };
+
+      claimButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (!verifyButton.classList.contains('is-visible')) showVerifyButton();
+        else verifyButton.focus({ preventScroll: true });
+      });
+
+      let verifyRedirectTimer = 0;
+      let verifyPending = false;
+
+      const resetVerifyButton = () => {
+        if (verifyRedirectTimer) {
+          window.clearTimeout(verifyRedirectTimer);
+          verifyRedirectTimer = 0;
+        }
+
+        verifyPending = false;
+        verifyButton.classList.remove('is-loading');
+        verifyButton.removeAttribute('aria-busy');
+        verifyButton.removeAttribute('aria-disabled');
+        verifyLabel.textContent = 'Verify';
+        toast.classList.remove('is-visible');
+      };
+
+      window.addEventListener('pageshow', resetVerifyButton);
+
+      try {
+        if (sessionStorage.getItem('verifyButtonVisible') === 'true') showVerifyButton({ announce: false });
+      } catch {
+        // Continue with the default hidden state when browser storage is unavailable.
+      }
+
+      verifyButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (verifyPending) return;
+
+        verifyPending = true;
+        const destination = verifyButton.href;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        verifyButton.classList.add('is-loading');
+        verifyButton.setAttribute('aria-busy', 'true');
+        verifyButton.setAttribute('aria-disabled', 'true');
+        verifyLabel.textContent = 'Preparing verification…';
+        toast.textContent = 'Preparing secure verification…';
+        toast.classList.add('is-visible');
+
+        verifyRedirectTimer = window.setTimeout(() => {
+          window.location.assign(destination);
+        }, reducedMotion ? 800 : 1800);
+      });
+    })();
+  </script>
+</body>
+</html>

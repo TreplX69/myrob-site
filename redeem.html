@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f8">
+  <meta name="description" content="Redeem a Roblox gift card, virtual item, or promo code.">
+  <title>Redeem Roblox Codes</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #111d2e;
+      --muted: #30445f;
+      --line: #d8dce5;
+      --header: #f7f7f8;
+      --blue: #2f5ff2;
+      --blue-dark: #244bd0;
+      --disabled: #eff0f4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body { min-width: 0; }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: #fff;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    button, input { font: inherit; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .site-header {
+      width: 100%;
+      height: 48px;
+      border-bottom: 1px solid #f0f0f2;
+      background: var(--header);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 13px 0 16px;
+    }
+
+    .logo {
+      position: relative;
+      display: block;
+      width: 31px;
+      height: 31px;
+      flex: 0 0 auto;
+      background: #3b3d42;
+      transform: rotate(14deg);
+    }
+
+    .logo::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      left: 11px;
+      width: 9px;
+      height: 9px;
+      background: var(--header);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 72px;
+      margin-left: 53px;
+    }
+
+    .main-nav a {
+      color: #07101d;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 48px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus-visible { color: var(--blue); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      gap: 6px;
+      min-width: 0;
+      margin-left: 43px;
+    }
+
+    .search-wrap {
+      position: relative;
+      display: block;
+      width: 476px;
+      max-width: 476px;
+      flex: 0 1 476px;
+    }
+
+    .search {
+      width: 100%;
+      height: 35px;
+      padding: 0 14px 0 42px;
+      border: 1px solid #cdd2db;
+      border-radius: 9px;
+      outline: 0;
+      background: #eef0f4;
+      color: var(--text);
+      font-size: 20px;
+    }
+
+    .search::placeholder { color: #34445b; opacity: 1; }
+    .search:focus { border-color: #8198e5; box-shadow: 0 0 0 3px rgba(47, 95, 242, .13); }
+    .search-wrap.is-open .search {
+      border-color: #a7a9ae;
+      background: #f2f3f5;
+      box-shadow: 0 0 0 1px #a7a9ae;
+    }
+
+    .search-icon {
+      position: absolute;
+      z-index: 1;
+      top: 9px;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #4a515c;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .search-icon::after {
+      content: "";
+      position: absolute;
+      right: -6px;
+      bottom: -4px;
+      width: 7px;
+      height: 2px;
+      background: #4a515c;
+      transform: rotate(45deg);
+    }
+
+    .search-overlay {
+      position: fixed;
+      z-index: 40;
+      top: 48px;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity .2s ease, visibility 0s linear .2s;
+    }
+
+    .search-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      transition: opacity .2s ease;
+    }
+
+    .search-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+    }
+
+    .search-panel {
+      position: absolute;
+      top: 0;
+      right: clamp(16px, 6vw, 92px);
+      width: min(1000px, calc(100vw - 30px));
+      min-height: 159px;
+      padding: 28px 18px 42px;
+      overflow: hidden;
+      border-radius: 0 0 3px 3px;
+      background: #fff;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, .28);
+      transform: translateY(-8px);
+      transition: transform .24s cubic-bezier(.22, .8, .28, 1);
+    }
+
+    .search-overlay.is-open .search-panel { transform: translateY(0); }
+
+    .search-panel-title {
+      margin: 0 0 17px;
+      color: #272a30;
+      font-size: 24px;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .search-categories {
+      position: relative;
+      padding-right: 48px;
+    }
+
+    .search-category-list {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+
+    .search-category-list::-webkit-scrollbar { display: none; }
+
+    .search-category {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: #e5e6eb;
+      color: #2d3036;
+      font-size: 17px;
+      font-weight: 650;
+      line-height: 1;
+      text-decoration: none;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+    .search-category:hover,
+    .search-category:focus-visible {
+      background: #d7d9df;
+      color: #111317;
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .search-next {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), #f7f7f8 27%);
+      color: #303238;
+      cursor: pointer;
+    }
+
+    .search-next::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      transform: translateX(-3px) rotate(45deg);
+    }
+
+    .search-next:hover,
+    .search-next:focus-visible {
+      color: #111317;
+      outline: none;
+    }
+
+    body.search-is-open { overflow: hidden; }
+
+    .privacy-choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: #27405f;
+      white-space: nowrap;
+    }
+
+    .privacy-choice:hover,
+    .privacy-choice:focus-visible {
+      text-decoration: none;
+    }
+
+    .privacy-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      width: 53px;
+      height: 26px;
+      margin-left: 2px;
+      border: 2px solid #2772eb;
+      border-radius: 14px;
+      background: #2772eb;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .privacy-badge span { display: inline-block; }
+    .privacy-badge .privacy-check { transform: translateY(-1px); }
+
+    .privacy-modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity .2s ease, visibility 0s linear .2s;
+    }
+
+    .privacy-modal.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      transition: opacity .2s ease;
+    }
+
+    .privacy-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+    }
+
+    .privacy-dialog {
+      position: relative;
+      width: min(400px, 100%);
+      padding: 22px 20px 20px;
+      border-radius: 16px;
+      background: #f8f8fa;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .28);
+      color: #292c33;
+      transform: translateY(10px) scale(.98);
+      transition: transform .24s cubic-bezier(.22, .8, .28, 1);
+    }
+
+    .privacy-modal.is-open .privacy-dialog { transform: translateY(0) scale(1); }
+
+    .privacy-dialog-title {
+      max-width: 320px;
+      margin: 0 28px 11px 0;
+      color: #272a30;
+      font-size: 24px;
+      font-weight: 750;
+      line-height: 1.18;
+    }
+
+    .privacy-dialog-copy {
+      margin: 0;
+      color: #3d4148;
+      font-size: 17px;
+      line-height: 1.48;
+    }
+
+    .privacy-dialog-link {
+      display: inline-block;
+      margin-top: 22px;
+      color: #30343b;
+      font-size: 17px;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+
+    .privacy-dialog-link:hover,
+    .privacy-dialog-link:focus-visible {
+      text-decoration: underline;
+    }
+
+    .privacy-dialog-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #292c33;
+      cursor: pointer;
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .privacy-dialog-close:hover,
+    .privacy-dialog-close:focus-visible {
+      color: #000;
+      outline: 2px solid rgba(47, 95, 242, .35);
+      outline-offset: 2px;
+    }
+
+    .privacy-dialog-ok {
+      display: block;
+      width: 100%;
+      height: 60px;
+      margin-top: 21px;
+      border: 0;
+      border-radius: 10px;
+      background: #3560f5;
+      color: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 700;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .privacy-dialog-ok:hover,
+    .privacy-dialog-ok:focus-visible {
+      background: #2d52da;
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    body.privacy-modal-is-open { overflow: hidden; }
+
+    main {
+      flex: 1 0 auto;
+      width: min(1193px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 54px 0 115px;
+    }
+
+    h1 {
+      margin: 0 0 25px;
+      color: #091a31;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -.7px;
+      line-height: 1.15;
+    }
+
+    .redeem-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 569px) minmax(0, 586px);
+      gap: 60px;
+      align-items: start;
+    }
+
+    .redeem-description {
+      margin: 0 0 28px;
+      color: #091a31;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.48;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 10px;
+      color: #091a31;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .input-wrap { position: relative; }
+
+    .code-input {
+      display: block;
+      width: 100%;
+      height: 60px;
+      padding: 0 57px 0 15px;
+      border: 1px solid #e0e7f5;
+      border-radius: 9px;
+      outline: 0;
+      background: #fff;
+      color: var(--text);
+      font-size: 19px;
+    }
+
+    .code-input:focus { border-color: #91a9ef; box-shadow: 0 0 0 3px rgba(47, 95, 242, .11); }
+
+    .scan-button {
+      position: absolute;
+      top: 14px;
+      right: 17px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #30343b;
+      cursor: pointer;
+    }
+
+    .scan-icon {
+      position: absolute;
+      top: 7px;
+      left: 4px;
+      width: 23px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-radius: 3px;
+    }
+
+    .scan-icon::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 6px;
+      width: 8px;
+      height: 7px;
+      border: 2px solid currentColor;
+      border-bottom: 0;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .scan-icon::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      width: 4px;
+      height: 4px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .redeem-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 60px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--blue);
+      color: #fff;
+      cursor: pointer;
+      font-size: 19px;
+      font-weight: 700;
+      transition: background-color .2s ease, color .2s ease, opacity .2s ease;
+    }
+
+    .redeem-button:disabled {
+      background: var(--disabled);
+      color: #a0a2a8;
+      cursor: not-allowed;
+    }
+
+    .redeem-button.is-loading:disabled {
+      background: var(--blue);
+      color: #fff;
+      cursor: wait;
+      opacity: .94;
+    }
+
+    .redeem-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      border: 2px solid rgba(255, 255, 255, .38);
+      border-top-color: currentColor;
+      border-radius: 50%;
+    }
+
+    .redeem-button.is-loading .redeem-spinner {
+      display: inline-block;
+      animation: redeem-button-spin .72s linear infinite;
+    }
+
+    @keyframes redeem-button-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .redeem-button { transition: none; }
+      .redeem-button.is-loading .redeem-spinner { animation: none; }
+    }
+
+    .redeem-button:not(:disabled):hover,
+    .redeem-button:not(:disabled):focus-visible { background: var(--blue-dark); }
+
+    .form-status {
+      min-height: 0;
+      margin-top: 0;
+      color: #b3261e;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .legal {
+      margin-top: 32px;
+      color: #30445f;
+      font-size: 20px;
+      line-height: 1.52;
+    }
+
+    .legal a {
+      color: #07101d;
+      text-decoration: none;
+    }
+
+    .legal a:hover,
+    .legal a:focus-visible { text-decoration: underline; }
+
+    .info-section h2 {
+      margin: 0 0 25px;
+      color: #091a31;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .info-list a {
+      color: #091a31;
+      font-size: 20px;
+      line-height: 1.3;
+      text-decoration: none;
+    }
+
+    .info-list a:hover,
+    .info-list a:focus-visible { text-decoration: underline; }
+
+    .redeem-banner {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 370px;
+      margin-top: 28px;
+      overflow: hidden;
+      border-radius: 15px;
+      background-color: #050505;
+      background-image: url("redeem-banner.png");
+      background-position: center;
+      background-size: cover;
+      box-shadow: 0 10px 24px rgba(13, 22, 35, .10);
+    }
+
+    .info-section--image {
+      min-width: 0;
+    }
+
+    .info-section--image .redeem-banner {
+      width: 100%;
+      height: 370px;
+      margin-top: 0;
+    }
+
+    @media (max-width: 1050px) {
+      .info-section--image .redeem-banner { height: 320px; }
+    }
+
+    @media (max-width: 767px) {
+      .info-section--image { margin-top: 22px; }
+
+      .info-section--image .redeem-banner {
+        width: 100%;
+        height: 290px;
+        aspect-ratio: auto;
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .info-section--image .redeem-banner { height: 230px; }
+    }
+
+    footer {
+      flex: 0 0 auto;
+      width: min(1336px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 0 0 18px;
+      color: #27405f;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 27px;
+      padding: 0 0 52px;
+      border-bottom: 1px solid #bfc6d1;
+      font-size: 20px;
+      white-space: nowrap;
+    }
+
+    .footer-links a,
+    .privacy-choice {
+      color: #27405f;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover,
+    .footer-links a:focus-visible,
+    .privacy-choice:hover,
+    .privacy-choice:focus-visible { text-decoration: underline; }
+
+    .privacy-choice {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .privacy-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 16px;
+      margin-left: 3px;
+      border: 2px solid #2772eb;
+      border-radius: 8px;
+      color: #2772eb;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      vertical-align: 2px;
+    }
+
+    .copyright {
+      padding-top: 31px;
+      color: #1c3350;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    @media (max-width: 1280px) {
+      .header-actions { margin-left: 28px; }
+      .search-wrap { max-width: 360px; }
+      main { padding-top: 48px; }
+    }
+
+    @media (max-width: 1050px) {
+      .main-nav { gap: 28px; margin-left: 33px; }
+      .main-nav a { font-size: 16px; }
+      .header-actions { margin-left: 25px; }
+      .search-wrap { max-width: 280px; }
+      .redeem-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
+      .legal, .info-list a { font-size: 17px; }
+      .footer-links { gap: 15px; font-size: 16px; }
+    }
+
+    @media (max-width: 760px) {
+      .site-header { height: auto; min-height: 48px; }
+      .header-inner { flex-wrap: wrap; gap: 12px 18px; padding: 10px 15px; }
+      .main-nav { order: 3; width: 100%; justify-content: space-between; gap: 12px; margin: 0; padding-top: 10px; border-top: 1px solid #e1e3e7; }
+      .main-nav a { font-size: 14px; line-height: 1; }
+      .header-actions { margin-left: auto; }
+      .search-wrap { display: none; }
+      main { width: min(100% - 30px, 570px); padding-top: 38px; }
+      h1 { font-size: clamp(29px, 8vw, 32px); overflow-wrap: anywhere; }
+      .redeem-columns { display: block; }
+      .info-section { margin-top: 44px; }
+      .redeem-banner { height: 290px; }
+      .footer-links { flex-wrap: wrap; gap: 14px 18px; padding-bottom: 34px; white-space: normal; }
+    }
+
+    @media (max-width: 480px) {
+      main { width: min(100% - 24px, 570px); padding-top: 30px; }
+      h1 { font-size: clamp(27px, 8vw, 29px); }
+      .redeem-description { margin-bottom: 22px; font-size: 19px; overflow-wrap: anywhere; }
+      .field-label { font-size: 18px; }
+      .code-input, .redeem-button { height: 56px; }
+      .legal, .info-list a { font-size: 15px; overflow-wrap: anywhere; }
+      .redeem-banner { height: 230px; }
+      footer { width: min(100% - 24px, 570px); }
+      .footer-links { gap: 12px 15px; padding-bottom: 28px; font-size: 14px; }
+      .copyright { padding-top: 22px; }
+      .copyright { font-size: 11px; overflow-wrap: anywhere; }
+    }
+
+    /* Compact mobile layout. Desktop/tablet rules above remain unchanged. */
+    @media (max-width: 767px) {
+      html,
+      body {
+        min-width: 0;
+      }
+
+      .site-header {
+        height: 52px;
+        min-height: 52px;
+      }
+
+      .header-inner {
+        height: 52px;
+        flex-wrap: nowrap;
+        gap: 16px;
+        padding: 0 clamp(10px, 3.5vw, 16px);
+      }
+
+      .logo {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        margin: 0 2px;
+      }
+
+      .main-nav {
+        order: initial;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        gap: clamp(8px, 3vw, 16px);
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .main-nav a {
+        min-width: 0;
+        flex: 0 1 auto;
+        font-size: clamp(12px, 3.4vw, 16px);
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .header-actions {
+        display: none;
+      }
+
+      main {
+        width: 100%;
+        max-width: 570px;
+        padding: 18px clamp(12px, 4vw, 18px) 42px;
+      }
+
+      h1 {
+        margin-bottom: 14px;
+        font-size: clamp(27px, 7.6vw, 34px);
+        letter-spacing: -.6px;
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+      }
+
+      .redeem-columns {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        min-width: 0;
+      }
+
+      .redeem-columns > section {
+        min-width: 0;
+      }
+
+      .redeem-description {
+        margin-bottom: 12px;
+        font-size: clamp(17px, 4.8vw, 20px);
+        line-height: 1.32;
+        overflow-wrap: anywhere;
+      }
+
+      .field-label {
+        margin-bottom: 6px;
+        font-size: 15px;
+      }
+
+      .code-input {
+        width: 100%;
+        height: 52px;
+        padding: 0 50px 0 12px;
+        font-size: 17px;
+      }
+
+      .scan-button {
+        top: 11px;
+        right: 12px;
+      }
+
+      .redeem-button {
+        height: 52px;
+        margin-top: 10px;
+        font-size: 17px;
+      }
+
+      .form-status {
+        min-height: 0;
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .legal {
+        margin-top: 14px;
+        font-size: 12.5px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+      }
+
+      .info-section {
+        margin-top: 22px;
+      }
+
+      .info-section h2 {
+        margin-bottom: 10px;
+        font-size: clamp(22px, 6vw, 26px);
+        line-height: 1.15;
+      }
+
+      .info-list {
+        gap: 8px;
+      }
+
+      .info-list a {
+        display: block;
+        font-size: 13.5px;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .redeem-banner {
+        width: min(100%, 160px);
+        height: auto;
+        aspect-ratio: 1;
+        margin: 14px auto 0;
+        border-radius: 12px;
+        background-size: cover;
+      }
+
+      footer {
+        width: 100%;
+        padding: 0 clamp(12px, 4vw, 18px) 12px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding-bottom: 18px;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: normal;
+      }
+
+      .privacy-choice {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .privacy-badge {
+        width: 29px;
+        height: 14px;
+        font-size: 10px;
+      }
+
+      .copyright {
+        padding-top: 14px;
+        font-size: 10px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    /* The footer is the only fixed-width row that needs an intermediate tablet wrap. */
+    @media (max-width: 1023px) {
+      .footer-links {
+        flex-wrap: wrap;
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .search-overlay { top: 52px; }
+
+      .search-panel {
+        right: 12px;
+        width: calc(100vw - 24px);
+        min-height: 138px;
+        padding: 22px 14px 28px;
+      }
+
+      .search-panel-title {
+        margin-bottom: 14px;
+        font-size: 21px;
+      }
+
+      .search-categories { padding-right: 42px; }
+      .search-category { min-height: 36px; padding-inline: 13px; font-size: 14px; }
+      .search-next { width: 42px; height: 36px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .search-overlay,
+      .search-panel,
+      .search-category-list,
+      .search-category { transition: none; scroll-behavior: auto; }
+
+      .privacy-modal,
+      .privacy-dialog,
+      .privacy-dialog-ok { transition: none; }
+    }
+
+    @media (max-width: 767px) {
+      .privacy-choice { font-size: 11px; }
+
+      .privacy-badge {
+        width: 42px;
+        height: 21px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+    }
+
+    /* Final footer override keeps the privacy control visually identical at every breakpoint. */
+    .privacy-choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: #27405f;
+      white-space: nowrap;
+    }
+
+    .privacy-choice:hover,
+    .privacy-choice:focus-visible { text-decoration: none; }
+
+    .privacy-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      width: 53px;
+      height: 26px;
+      margin-left: 2px;
+      border: 2px solid #2772eb;
+      border-radius: 14px;
+      background: #2772eb;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .privacy-badge span { display: inline-block; color: inherit; }
+    .privacy-badge .privacy-check { transform: translateY(-1px); }
+
+    @media (max-width: 767px) {
+      .privacy-choice { font-size: 11px; }
+
+      .privacy-badge {
+        width: 42px;
+        height: 21px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="https://www.roblox.com/Login" aria-label="Roblox home"></a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="https://www.roblox.com/charts?device=computer&country=all">Charts</a>
+        <a href="https://www.roblox.com/catalog">Marketplace</a>
+        <a href="https://create.roblox.com/landing">Create</a>
+        <a href="https://www.roblox.com/upgrades/robux?ctx=navpopover">Robux</a>
+      </nav>
+
+      <div class="header-actions">
+        <label class="search-wrap">
+          <span class="search-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Search</span>
+          <input class="search" id="search-input" type="search" placeholder="Search" aria-label="Search" aria-controls="search-menu" aria-expanded="false">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-overlay" id="search-overlay" aria-hidden="true">
+    <div class="search-backdrop" data-search-close="true"></div>
+    <section class="search-panel" id="search-menu" aria-label="Search suggestions">
+      <h2 class="search-panel-title">Try searching for</h2>
+      <div class="search-categories">
+        <div class="search-category-list" id="search-category-list">
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Tycoon">Tycoon</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Escape">Escape</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Survival">Survival</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Story">Story</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Escape%20Room">Escape Room</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Sandbox">Sandbox</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Tower%20Defense">Tower Defense</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Life">Life</a>
+          <a class="search-category" href="https://www.roblox.com/discover/?Keyword=Quiz">Quiz</a>
+        </div>
+        <button class="search-next" id="search-next" type="button" aria-label="Show more search categories"></button>
+      </div>
+    </section>
+  </div>
+
+  <main>
+    <h1>Redeem Roblox Codes</h1>
+
+    <div class="redeem-columns">
+      <section aria-labelledby="code-heading">
+        <p class="redeem-description" id="code-heading">Enter your gift card, virtual item, or promo code below.</p>
+
+        <form id="redeem-form" novalidate>
+          <label class="field-label" for="code-input">Code</label>
+          <div class="input-wrap">
+            <input class="code-input" id="code-input" name="code" type="text" autocomplete="off" spellcheck="false" aria-describedby="form-status">
+            <button class="scan-button" type="button" aria-label="Scan code"><span class="scan-icon" aria-hidden="true"></span></button>
+          </div>
+          <button class="redeem-button" id="redeem-button" type="submit" disabled>
+            <span class="redeem-spinner" aria-hidden="true"></span>
+            <span class="redeem-button-label">Redeem</span>
+          </button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="legal">By redeeming your code, you represent that you, and your parent or legal guardian if you are under age 18, agree to our <a href="#terms">Terms of Use</a> including the arbitration clause and <a href="#gift-card-terms">Gift Card Terms &amp; Conditions</a> and acknowledge our <a href="#privacy">Privacy Policy</a>.</p>
+      </section>
+
+      <section class="info-section info-section--image" aria-label="Reward preview">
+        <a class="redeem-banner" href="reward.html" aria-label="Open reward page"></a>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="https://about.roblox.com/">About Us</a>
+      <a href="https://careers.roblox.com/">Jobs</a>
+      <a href="https://about.roblox.com/newsroom">Newsroom</a>
+      <a href="https://about.roblox.com/parental-controls">Parents</a>
+      <a href="https://en.help.roblox.com/hc/en-us">Help</a>
+      <a href="https://en.help.roblox.com/hc/en-us/articles/115004647846-Roblox-Terms-of-Use">Terms</a>
+      <a href="roblox.com/info/accessibility?locale=en_us">Accessibility</a>
+      <a href="https://en.help.roblox.com/hc/en-us/articles/115004630823-Roblox-Privacy-and-Cookie-Policy">Privacy</a>
+      <button class="privacy-choice" id="privacy-choice" type="button">Your Privacy Choices<span class="privacy-badge" aria-hidden="true"><span class="privacy-check">✓</span><span>×</span></span></button>
+      <a href="https://www.roblox.com/sitemap?locale=en_us">Sitemap</a>
+    </nav>
+    <p class="copyright">©2026 Roblox Corporation. Roblox, the Roblox logo and Powering Imagination are among our registered and unregistered trademarks in the U.S. and other countries.</p>
+  </footer>
+
+  <div class="privacy-modal" id="privacy-modal" aria-hidden="true">
+    <div class="privacy-modal-backdrop" id="privacy-modal-backdrop"></div>
+    <section class="privacy-dialog" role="dialog" aria-modal="true" aria-labelledby="privacy-dialog-title">
+      <button class="privacy-dialog-close" id="privacy-dialog-close" type="button" aria-label="Close privacy choices">×</button>
+      <h2 class="privacy-dialog-title" id="privacy-dialog-title">No opt out signal currently detected</h2>
+      <p class="privacy-dialog-copy">You can use the Global Privacy Control (GPC) to opt-out of the sale and sharing of your personal information from your browser. No GPC signal is currently detected.</p>
+      <a class="privacy-dialog-link" href="https://www.roblox.com/info/privacy" target="_blank" rel="noopener noreferrer">Learn more about Roblox ads preferences.</a>
+      <button class="privacy-dialog-ok" id="privacy-dialog-ok" type="button">OK</button>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const form = document.querySelector('#redeem-form');
+      const input = document.querySelector('#code-input');
+      const button = document.querySelector('#redeem-button');
+      const buttonLabel = button.querySelector('.redeem-button-label');
+      const status = document.querySelector('#form-status');
+      const scanButton = document.querySelector('.scan-button');
+      const searchInput = document.querySelector('#search-input');
+      const searchWrap = document.querySelector('.search-wrap');
+      const searchOverlay = document.querySelector('#search-overlay');
+      const searchBackdrop = document.querySelector('.search-backdrop');
+      const searchCategoryList = document.querySelector('#search-category-list');
+      const searchNext = document.querySelector('#search-next');
+      const privacyChoice = document.querySelector('#privacy-choice');
+      const privacyModal = document.querySelector('#privacy-modal');
+      const privacyModalBackdrop = document.querySelector('#privacy-modal-backdrop');
+      const privacyDialogClose = document.querySelector('#privacy-dialog-close');
+      const privacyDialogOk = document.querySelector('#privacy-dialog-ok');
+      const queryParameters = new URLSearchParams(window.location.search);
+      const campaignPath = queryParameters.get('path');
+      const requestedCode = queryParameters.get('code');
+      const sessionCodeKey = campaignPath ? `redeemCode:${campaignPath}` : '';
+      const redeemDelayMs = 1200;
+      let campaignData = null;
+      let activeCode = '';
+      let redeemPending = false;
+
+      const openSearch = () => {
+        searchOverlay.classList.add('is-open');
+        searchOverlay.setAttribute('aria-hidden', 'false');
+        searchInput.setAttribute('aria-expanded', 'true');
+        searchWrap.classList.add('is-open');
+        document.body.classList.add('search-is-open');
+      };
+
+      const closeSearch = () => {
+        searchOverlay.classList.remove('is-open');
+        searchOverlay.setAttribute('aria-hidden', 'true');
+        searchInput.setAttribute('aria-expanded', 'false');
+        searchWrap.classList.remove('is-open');
+        document.body.classList.remove('search-is-open');
+      };
+
+      searchInput.addEventListener('focus', openSearch);
+      searchInput.addEventListener('click', openSearch);
+      searchBackdrop.addEventListener('click', closeSearch);
+      searchNext.addEventListener('click', () => {
+        searchCategoryList.scrollBy({ left: Math.max(220, searchCategoryList.clientWidth * .72), behavior: 'smooth' });
+      });
+
+      const openPrivacyModal = () => {
+        privacyModal.classList.add('is-open');
+        privacyModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('privacy-modal-is-open');
+        window.requestAnimationFrame(() => privacyDialogClose.focus({ preventScroll: true }));
+      };
+
+      const closePrivacyModal = () => {
+        privacyModal.classList.remove('is-open');
+        privacyModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('privacy-modal-is-open');
+        privacyChoice.focus({ preventScroll: true });
+      };
+
+      privacyChoice.addEventListener('click', openPrivacyModal);
+      privacyModalBackdrop.addEventListener('click', closePrivacyModal);
+      privacyDialogClose.addEventListener('click', closePrivacyModal);
+      privacyDialogOk.addEventListener('click', closePrivacyModal);
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && privacyModal.classList.contains('is-open')) {
+          closePrivacyModal();
+          return;
+        }
+
+        if (event.key === 'Escape' && searchOverlay.classList.contains('is-open')) {
+          closeSearch();
+          searchInput.blur();
+        }
+      });
+
+      const showStatus = (message, color = '#b3261e') => {
+        status.style.color = color;
+        status.textContent = message;
+      };
+
+      const updateButton = () => {
+        button.disabled = redeemPending || input.value.trim().length === 0;
+        if (input.value.trim().length > 0) {
+          status.textContent = '';
+          status.style.color = '';
+        }
+      };
+
+      const setRedeemLoading = (loading) => {
+        button.classList.toggle('is-loading', loading);
+        button.disabled = loading || input.value.trim().length === 0;
+
+        if (loading) {
+          buttonLabel.textContent = 'Redeeming...';
+          button.setAttribute('aria-busy', 'true');
+          button.setAttribute('aria-label', 'Redeeming...');
+        } else {
+          buttonLabel.textContent = 'Redeem';
+          button.removeAttribute('aria-busy');
+          button.removeAttribute('aria-label');
+        }
+      };
+
+      const readSessionCode = () => {
+        if (!sessionCodeKey) return '';
+        try {
+          return sessionStorage.getItem(sessionCodeKey) || '';
+        } catch {
+          return '';
+        }
+      };
+
+      const saveSessionCode = (code) => {
+        if (!sessionCodeKey || !code) return;
+        try {
+          sessionStorage.setItem(sessionCodeKey, code);
+        } catch {
+          // Continue with the in-memory value when browser storage is unavailable.
+        }
+      };
+
+      input.addEventListener('input', updateButton);
+
+      scanButton.addEventListener('click', () => {
+        showStatus('Scan a campaign QR code to fill this field automatically.');
+      });
+
+      const loadCampaign = async () => {
+        if (!campaignPath) return;
+
+        try {
+          const response = await fetch('data/campaigns.json', { cache: 'no-store' });
+          if (!response.ok) throw new Error('Campaign data could not be loaded.');
+          const campaigns = await response.json();
+          campaignData = campaigns.find((campaign) => campaign.path === campaignPath);
+          if (!campaignData) throw new Error('Campaign not found.');
+
+          const qrCode = typeof requestedCode === 'string' ? requestedCode.trim() : '';
+          const existingSessionCode = readSessionCode();
+          const codeToRestore = qrCode || existingSessionCode || String(campaignData.code || '').trim();
+          if (!codeToRestore) throw new Error('This campaign does not have a redeem code yet.');
+
+          activeCode = codeToRestore;
+          input.value = activeCode;
+          input.dataset.campaignPath = campaignData.path;
+          saveSessionCode(activeCode);
+          button.disabled = false;
+          status.textContent = '';
+        } catch (error) {
+          showStatus(error.message);
+        }
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (redeemPending) return;
+
+        if (!input.value.trim()) {
+          showStatus('Enter a code to continue.');
+          input.focus();
+          return;
+        }
+
+        if (!input.dataset.campaignPath) {
+          showStatus('Open this page from a campaign QR code first.');
+          return;
+        }
+
+        if (input.value.trim().toUpperCase() !== activeCode.toUpperCase()) {
+          showStatus('This code does not match the selected campaign.');
+          return;
+        }
+
+        redeemPending = true;
+        const redeemStartedAt = performance.now();
+        setRedeemLoading(true);
+        showStatus('Redeeming...', '#1b7a42');
+        try {
+          const remainingDelay = Math.max(0, redeemDelayMs - (performance.now() - redeemStartedAt));
+          if (remainingDelay > 0) await new Promise((resolve) => window.setTimeout(resolve, remainingDelay));
+
+          sessionStorage.setItem('rewardData', JSON.stringify({ ...campaignData, code: input.value }));
+          window.location.href = 'reward.html';
+        } catch (error) {
+          redeemPending = false;
+          setRedeemLoading(false);
+          showStatus(error.message);
+        }
+      });
+
+      loadCampaign();
+    })();
+  </script>
+</body>
+</html>

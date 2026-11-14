@@ -1,0 +1,13 @@
+{
+  "name": "reward-qr-flow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple QR reward redemption flow",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

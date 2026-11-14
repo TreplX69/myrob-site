@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reward Campaign Panel</title>
+  <style>
+    :root { color-scheme: light; --ink: #162238; --muted: #607086; --line: #dce2eb; --blue: #2f5ff2; --bg: #f5f7fb; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; margin: 0; background: var(--bg); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+    .admin-header { padding: 22px 28px; background: #18191d; color: #fff; }
+    .admin-header strong { font-size: 20px; }
+    .admin-header a { float: right; color: #fff; font-size: 14px; }
+    main { width: min(100% - 32px, 920px); margin: 0 auto; padding: 42px 0 60px; }
+    h1 { margin: 0 0 8px; font-size: 34px; }
+    .intro { margin: 0 0 28px; color: var(--muted); line-height: 1.5; }
+    .panel { padding: 26px; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: 0 14px 32px rgba(25, 36, 53, .07); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 19px 20px; }
+    label { display: grid; gap: 8px; color: #263850; font-size: 14px; font-weight: 700; }
+    .full { grid-column: 1 / -1; }
+    input, textarea { width: 100%; border: 1px solid #cfd7e3; border-radius: 8px; outline: 0; background: #fff; color: var(--ink); font: inherit; }
+    input { height: 44px; padding: 0 12px; }
+    textarea { min-height: 98px; padding: 12px; resize: vertical; line-height: 1.45; }
+    input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47, 95, 242, .12); }
+    input[type="file"] { padding: 10px; }
+    .help { color: var(--muted); font-size: 12px; font-weight: 400; }
+    .actions { display: flex; align-items: center; gap: 14px; margin-top: 23px; }
+    button { border: 0; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer; font: inherit; font-weight: 700; }
+    #save-button { min-height: 44px; padding: 0 20px; }
+    button:disabled { cursor: wait; opacity: .65; }
+    .message { min-height: 20px; color: #b3261e; font-size: 14px; }
+    .message.success { color: #19723d; }
+    .qr-result { display: none; margin-top: 22px; padding: 17px; border: 1px solid #bfe5cb; border-radius: 9px; background: #f0fff4; }
+    .qr-result.visible { display: block; }
+    .qr-result strong { display: block; margin-bottom: 8px; color: #176637; }
+    .qr-url { display: flex; gap: 8px; }
+    .qr-url input { min-width: 0; background: #fff; }
+    #copy-button { padding: 0 14px; background: #19723d; white-space: nowrap; }
+    .campaigns { margin-top: 34px; }
+    .campaigns h2 { margin: 0 0 14px; font-size: 22px; }
+    .campaign-list { display: grid; gap: 10px; }
+    .campaign { display: flex; justify-content: space-between; gap: 20px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .campaign strong { display: block; margin-bottom: 4px; }
+    .campaign span { color: var(--muted); font-size: 13px; }
+    .empty { color: var(--muted); }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .full { grid-column: auto; } .panel { padding: 20px 16px; } .campaign { display: block; } .qr-url { display: grid; } #copy-button { min-height: 40px; } }
+  </style>
+</head>
+<body>
+  <header class="admin-header"><strong>Reward Campaign Panel</strong><a href="redeem.html">Open redeem page</a></header>
+  <main>
+    <h1>Create a campaign</h1>
+    <p class="intro">Enter the same path you will place inside your QR code. After saving, replace <code>data/campaigns.json</code> with the downloaded file and push it to GitHub Pages.</p>
+
+    <section class="panel">
+      <form id="campaign-form">
+        <div class="form-grid">
+          <label>QR path
+            <input id="path" name="path" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="summer-event">
+            <span class="help">Use lowercase letters, numbers, and hyphens.</span>
+          </label>
+          <label>Reward title
+            <input id="title" name="title" required maxlength="100" placeholder="Shadow Crown">
+          </label>
+          <label class="full">Reward description
+            <textarea id="description" name="description" required maxlength="500" placeholder="A legendary crown infused with shadows."></textarea>
+          </label>
+          <label class="full">Reward image
+            <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" required>
+            <span class="help">This image will appear on the reward card.</span>
+          </label>
+        </div>
+        <div class="actions">
+          <button id="save-button" type="submit">Save campaign</button>
+          <p class="message" id="message" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <div class="qr-result" id="qr-result">
+        <strong>Campaign saved. Put this URL inside your QR code:</strong>
+        <div class="qr-url"><input id="qr-url" readonly><button id="copy-button" type="button">Copy URL</button></div>
+      </div>
+    </section>
+
+    <section class="campaigns">
+      <h2>Saved campaigns</h2>
+      <div class="campaign-list" id="campaign-list"><p class="empty">Loading…</p></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const form = document.querySelector('#campaign-form');
+      const saveButton = document.querySelector('#save-button');
+      const message = document.querySelector('#message');
+      const qrResult = document.querySelector('#qr-result');
+      const qrUrl = document.querySelector('#qr-url');
+      const copyButton = document.querySelector('#copy-button');
+      const list = document.querySelector('#campaign-list');
+      const codeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+      const readImage = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Could not read the selected image.'));
+        reader.readAsDataURL(file);
+      });
+
+      const escapeHtml = (value) => value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+
+      const readCampaigns = async () => {
+        const response = await fetch('data/campaigns.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Could not load data/campaigns.json.');
+        return response.json();
+      };
+
+      const renderCampaigns = (campaigns) => {
+        if (!campaigns.length) { list.innerHTML = '<p class="empty">No campaigns yet.</p>'; return; }
+        list.innerHTML = campaigns.map((campaign) => `<article class="campaign"><div><strong>${escapeHtml(campaign.title)}</strong><span>QR: redeem.html?path=${escapeHtml(campaign.path)}</span></div><span>${escapeHtml(campaign.description)}</span></article>`).join('');
+      };
+
+      const loadCampaigns = async () => {
+        try {
+          renderCampaigns(await readCampaigns());
+        } catch { list.innerHTML = '<p class="empty">Could not load data/campaigns.json.</p>'; }
+      };
+
+      const createCode = (campaigns) => {
+        const existingCodes = new Set(campaigns.map((campaign) => campaign.code).filter(Boolean));
+        let code = '';
+        do {
+          const bytes = new Uint8Array(14);
+          crypto.getRandomValues(bytes);
+          code = `RB${Array.from(bytes, (byte) => codeAlphabet[byte % codeAlphabet.length]).join('')}`;
+        } while (existingCodes.has(code));
+        return code;
+      };
+
+      const downloadCampaigns = (campaigns) => {
+        const blob = new Blob([`${JSON.stringify(campaigns, null, 2)}\n`], { type: 'application/json' });
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'campaigns.json';
+        link.click();
+        URL.revokeObjectURL(downloadUrl);
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        message.className = 'message';
+        message.textContent = '';
+        const file = document.querySelector('#image').files[0];
+        if (!file) { message.textContent = 'Choose a reward image first.'; return; }
+        if (file.size > 5 * 1024 * 1024) { message.textContent = 'Keep the reward image under 5 MB.'; return; }
+
+        saveButton.disabled = true;
+        try {
+          const image = await readImage(file);
+          const path = document.querySelector('#path').value.trim().toLowerCase();
+          const title = document.querySelector('#title').value.trim();
+          const description = document.querySelector('#description').value.trim();
+          if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path) || path.length > 80) throw new Error('Path must use lowercase letters, numbers, and hyphens only.');
+          if (!title || title.length > 100) throw new Error('Title must contain between 1 and 100 characters.');
+          if (!description || description.length > 500) throw new Error('Description must contain between 1 and 500 characters.');
+
+          const campaigns = await readCampaigns();
+          const existingIndex = campaigns.findIndex((campaign) => campaign.path === path);
+          const existingCampaign = existingIndex >= 0 ? campaigns[existingIndex] : null;
+          const campaign = {
+            path,
+            title,
+            description,
+            image,
+            code: existingCampaign?.code || createCode(campaigns)
+          };
+          if (existingIndex >= 0) campaigns[existingIndex] = campaign;
+          else campaigns.push(campaign);
+
+          downloadCampaigns(campaigns);
+          const publicUrl = new URL(`redeem.html?path=${encodeURIComponent(path)}`, window.location.href).href;
+          qrUrl.value = publicUrl;
+          qrResult.classList.add('visible');
+          message.className = 'message success';
+          message.textContent = 'campaigns.json downloaded. Replace the file and push it to GitHub Pages.';
+          form.reset();
+          renderCampaigns(campaigns);
+        } catch (error) {
+          message.textContent = error.message;
+        } finally {
+          saveButton.disabled = false;
+        }
+      });
+
+      copyButton.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(qrUrl.value);
+        copyButton.textContent = 'Copied';
+        window.setTimeout(() => { copyButton.textContent = 'Copy URL'; }, 1200);
+      });
+
+      loadCampaigns();
+    })();
+  </script>
+</body>
+</html>
